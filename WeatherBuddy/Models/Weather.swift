@@ -7,10 +7,11 @@
 
 import Foundation
 
-struct Weather: Codable {
+struct Weather: Codable, Hashable {
     let parameters: WeatherParameters
     let visibility: Double
     let wind: Wind
+    let unixDate: Double
     
     var condition: String {
         return conditions[0].main
@@ -29,10 +30,11 @@ struct Weather: Codable {
         case visibility
         case wind
         case conditions = "weather"
+        case unixDate = "dt"
     }
 }
 
-struct WeatherParameters: Codable {
+struct WeatherParameters: Codable, Hashable {
     let temperature: Double
     let feelsLikeTemperature: Double
     let pressure: Double
@@ -46,7 +48,7 @@ struct WeatherParameters: Codable {
     }
 }
 
-struct Wind: Codable {
+struct Wind: Codable, Hashable {
     let speed: Double
     let degrees: Double
     
@@ -56,7 +58,7 @@ struct Wind: Codable {
     }
 }
 
-struct Conditions: Codable {
+struct Conditions: Codable, Hashable {
     let main: String
     let description: String
     let icon: String

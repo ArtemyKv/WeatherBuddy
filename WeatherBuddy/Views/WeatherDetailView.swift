@@ -62,7 +62,8 @@ class WeatherDetailView: UIView {
     }()
     
     let collectionView: UICollectionView = {
-        let collectionView = UICollectionView()
+        let collectionView = UICollectionView(frame: CGRect(), collectionViewLayout: UICollectionViewLayout())
+        collectionView.backgroundColor = .clear
         return collectionView
     }()
     
@@ -121,6 +122,9 @@ class WeatherDetailView: UIView {
         outerVStack.translatesAutoresizingMaskIntoConstraints = false
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         
+        self.addSubview(collectionView)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             outerVStack.leadingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.leadingAnchor, constant: 8),
             outerVStack.trailingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.trailingAnchor, constant: -8),
@@ -129,6 +133,10 @@ class WeatherDetailView: UIView {
             backgroundView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             backgroundView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             backgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 30),
+            collectionView.topAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: 40),
+            collectionView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor),
         ])
         
     }

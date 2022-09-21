@@ -14,6 +14,9 @@ class DetailWeatherViewModel {
     private var currentWeather: Weather?
     private var forecast: [Weather]?
     
+    var hourlyForecastCellViewModels: Box<[HourlyForecastCellViewModel]> = Box(value: [])
+    var dailyForecastCellViewModels: Box<[DailyForecastCellViewModel]> = Box(value: [])
+    
     //MARK: - Service properties
     private let geocodingService = GeocodingService()
     private let weatherFetchingService = WeatherFetchingService()
@@ -34,6 +37,17 @@ class DetailWeatherViewModel {
     var date = Box(value: "")
     var weatherIcon: Box<UIImage?> = Box(value: nil)
     
+    //MARK: - CollectionView sections and items
+    enum Section {
+        case hourly
+//        case daily
+    }
+    
+    enum Item: Hashable {
+        case hourly(HourlyForecastCellViewModel)
+//        case daily(DailyForecastCellViewModel)
+    }
+    
     //MARK: - Methods
     private func configureBasicWeatherInfo(with weather: Weather) {
         cityName.value = location?.name ?? ""
@@ -50,13 +64,33 @@ class DetailWeatherViewModel {
         weatherDescription.value = weather.description
         date.value = dateFormatter.string(from: Date())
         weatherIcon.value = UIImage(named: weather.conditionIconID)
-        print(location)
+    }
+    
+    private func configureForecastViewModels(with forecast: [Weather]) {
+        configureHourlyForecastViewModel(with: forecast)
+        configureDailyForecastViewModel(with: forecast)
+    }
+    
+    private func configureHourlyForecastViewModel(with forecast: [Weather]) {
+        hourlyForecastCellViewModels.value.removeAll()
+        let oneDayWeatherItemsArray = Array(forecast.prefix(through: 7))
+        oneDayWeatherItemsArray.forEach {
+            self.hourlyForecastCellViewModels.value.append(HourlyForecastCellViewModel(weatherItem: $0))
+        }
+    }
+    
+    private func configureDailyForecastViewModel(with forecast: [Weather]) {
+        //TODO: - Write Implementation
     }
     
     private func fetchWeatherData(for location: Location) {
         weatherFetchingService.fetchCurrentWeatherData(for: location) { [weak self] weather, error in
             guard let self = self, let weather = weather else { return }
             self.configureBasicWeatherInfo(with: weather)
+        }
+        weatherFetchingService.fetchForecastWeatherData(for: location) { [weak self] response, error in
+            guard let self = self, let forecast = response?.list else { return }
+            self.configureForecastViewModels(with: forecast)
         }
     }
     

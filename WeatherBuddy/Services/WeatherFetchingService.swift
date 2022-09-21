@@ -89,7 +89,7 @@ class WeatherFetchingService {
         fetchWeatherData(dataType: Weather.self, weatherInfoType: WeatherInfoType.currentWeather, location: location, completion: completion)
     }
     
-    func fetchForecastWeatherData(for location: Location, completion: @escaping ([Weather]?, WeatherFetchingError?) -> Void ) {
-        fetchWeatherData(dataType: [Weather].self, weatherInfoType: WeatherInfoType.forecast, location: location, completion: completion)
+    func fetchForecastWeatherData(for location: Location, completion: @escaping (ForecastResponse?, WeatherFetchingError?) -> Void ) {
+        fetchWeatherData(dataType: ForecastResponse.self, weatherInfoType: WeatherInfoType.forecast, location: location, completion: completion)
     }
 }
