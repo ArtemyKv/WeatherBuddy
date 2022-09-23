@@ -29,7 +29,8 @@ class GeocodingService {
                                     country: placemark.country,
                                     administrativeArea: placemark.administrativeArea,
                                     latitude: coordinate.latitude,
-                                    longitude: coordinate.longitude)
+                                    longitude: coordinate.longitude,
+                                    timezone: placemark.timeZone)
             completion(location)
         }
     }
@@ -52,7 +53,8 @@ class GeocodingService {
                                     country: placemark.country,
                                     administrativeArea: placemark.administrativeArea,
                                     latitude: coordinate.latitude,
-                                    longitude: coordinate.longitude)
+                                    longitude: coordinate.longitude,
+                                    timezone: placemark.timeZone)
             completion(location)
         }
     }

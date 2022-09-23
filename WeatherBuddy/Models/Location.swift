@@ -13,5 +13,6 @@ struct Location {
     var administrativeArea: String?
     var latitude: Double
     var longitude: Double
+    var timezone: TimeZone?
     
 }

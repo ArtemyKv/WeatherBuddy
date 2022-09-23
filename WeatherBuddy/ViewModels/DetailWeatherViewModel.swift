@@ -51,6 +51,7 @@ class DetailWeatherViewModel {
     //MARK: - Methods
     private func configureBasicWeatherInfo(with weather: Weather) {
         cityName.value = location?.name ?? ""
+        dateFormatter.timeZone = location?.timezone
         
         if let area = location?.administrativeArea, let country = location?.country {
             areaName.value = area + ", " + country
