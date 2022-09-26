@@ -16,6 +16,8 @@ class HourlyForecastCellViewModel: ForecastCellViewModel {
         }
     }
     
+    var timeZone: TimeZone?
+    
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH"
@@ -27,13 +29,15 @@ class HourlyForecastCellViewModel: ForecastCellViewModel {
     var weatherIcon: UIImage? = nil
     
     func configureViewModel() {
+        dateFormatter.timeZone = timeZone
         hour = dateFormatter.string(from: Date(timeIntervalSince1970: weatherItem.unixDate))
         temperature = "\(Int(weatherItem.parameters.temperature))º"
         weatherIcon = UIImage(named: weatherItem.conditionIconID)
     }
     
-    init(weatherItem: Weather) {
+    init(weatherItem: Weather, timeZone: TimeZone?) {
         self.weatherItem = weatherItem
+        self.timeZone = timeZone
         configureViewModel()
     }
     

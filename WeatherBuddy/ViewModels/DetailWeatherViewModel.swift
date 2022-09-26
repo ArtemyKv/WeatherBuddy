@@ -14,8 +14,7 @@ class DetailWeatherViewModel {
     private var currentWeather: Weather?
     private var forecast: [Weather]?
     
-    var hourlyForecastCellViewModels: Box<[HourlyForecastCellViewModel]> = Box(value: [])
-    var dailyForecastCellViewModels: Box<[DailyForecastCellViewModel]> = Box(value: [])
+    var forecastCellViewModels: Box<[Section: [ForecastCellViewModel]]> = Box(value: [:])
     
     //MARK: - Service properties
     private let geocodingService = GeocodingService()
@@ -38,14 +37,14 @@ class DetailWeatherViewModel {
     var weatherIcon: Box<UIImage?> = Box(value: nil)
     
     //MARK: - CollectionView sections and items
-    enum Section {
+    enum Section: CaseIterable {
         case hourly
-//        case daily
+        case daily
     }
     
     enum Item: Hashable {
         case hourly(HourlyForecastCellViewModel)
-//        case daily(DailyForecastCellViewModel)
+        case daily(DailyForecastCellViewModel)
     }
     
     //MARK: - Methods
@@ -73,24 +72,51 @@ class DetailWeatherViewModel {
     }
     
     private func configureHourlyForecastViewModel(with forecast: [Weather]) {
-        hourlyForecastCellViewModels.value.removeAll()
-        let oneDayWeatherItemsArray = Array(forecast.prefix(through: 7))
+        forecastCellViewModels.value[.hourly] = []
+        let oneDayWeatherItemsArray = Array(forecast.prefix(through: 15))
         oneDayWeatherItemsArray.forEach {
-            self.hourlyForecastCellViewModels.value.append(HourlyForecastCellViewModel(weatherItem: $0))
+            self.forecastCellViewModels.value[.hourly]?.append(HourlyForecastCellViewModel(weatherItem: $0, timeZone: location?.timezone))
         }
     }
     
     private func configureDailyForecastViewModel(with forecast: [Weather]) {
-        //TODO: - Write Implementation
+        forecastCellViewModels.value[.daily] = []
+        let calendar = Calendar.current
+        var dailyForecastsDict: [Int: DailyForecastWeather] = [:]
+        for item in forecast {
+            let weekdayNumber = calendar.component(.weekday, from: Date(timeIntervalSince1970: item.unixDate))
+            let dayNumber = calendar.component(.day, from: Date(timeIntervalSince1970: item.unixDate))
+            let temperature = item.parameters.temperature
+            guard let parameters = dailyForecastsDict[dayNumber] else {
+                dailyForecastsDict[dayNumber] = DailyForecastWeather(minTemp: temperature,
+                                                                         maxTemp: temperature,
+                                                                         icons: [item.conditionIconID],
+                                                                         weekday: weekdayNumber)
+                continue
+            }
+            
+            if temperature < parameters.minTemp {
+                dailyForecastsDict[dayNumber]?.minTemp = temperature
+            } else if temperature >  parameters.maxTemp {
+                dailyForecastsDict[dayNumber]?.maxTemp = temperature
+            }
+            dailyForecastsDict[dayNumber]?.icons.append(item.conditionIconID)
+        }
+        
+        for key in dailyForecastsDict.keys.sorted(by: <) {
+            self.forecastCellViewModels.value[.daily]?.append(DailyForecastCellViewModel(dailyForecastWeather: dailyForecastsDict[key]!))
+        }
     }
     
     private func fetchWeatherData(for location: Location) {
         weatherFetchingService.fetchCurrentWeatherData(for: location) { [weak self] weather, error in
             guard let self = self, let weather = weather else { return }
+            self.currentWeather = weather
             self.configureBasicWeatherInfo(with: weather)
         }
         weatherFetchingService.fetchForecastWeatherData(for: location) { [weak self] response, error in
             guard let self = self, let forecast = response?.list else { return }
+            self.forecast = forecast
             self.configureForecastViewModels(with: forecast)
         }
     }

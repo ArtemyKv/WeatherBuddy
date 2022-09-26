@@ -29,6 +29,7 @@ class LocationWeatherViewController: UIViewController {
         configureForecastCollectionView()
         
         weatherView.collectionView.register(HourlyWeatherCollectionViewCell.self, forCellWithReuseIdentifier: HourlyWeatherCollectionViewCell.reuseIdentifier)
+        weatherView.collectionView.register(DailyWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DailyWeatherCollectionViewCell.reuseIdentifier)
     }
     
     override func loadView() {
@@ -63,27 +64,50 @@ extension LocationWeatherViewController {
         weatherView.collectionView.collectionViewLayout = createCollectionViewLayout()
         weatherView.collectionView.dataSource = collectionViewDataSource
         createDataSource()
-        viewModel.hourlyForecastCellViewModels.bind { [weak self] hourlyForecasts in
-            self?.applySnapshot(with: hourlyForecasts)
+        viewModel.forecastCellViewModels.bind { [weak self] cellViewModels in
+            self?.applySnapshot(with: cellViewModels)
         }
     }
 }
 
 extension LocationWeatherViewController {
     func createCollectionViewLayout() -> UICollectionViewCompositionalLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let layout = UICollectionViewCompositionalLayout { sectionIndex, environment in
+            let section: NSCollectionLayoutSection
+            
+            if sectionIndex == 0 {
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(0.4))
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 5)
+                group.contentInsets.top = 10
+                group.contentInsets.bottom = 10
+                
+                section = NSCollectionLayoutSection(group: group)
+                section.orthogonalScrollingBehavior = .continuous
+            } else {
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(44))
+                let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+
+                section = NSCollectionLayoutSection(group: group)
+                section.contentInsets.top = 10
+                section.contentInsets.bottom = 10
+                
+            }
+            
+            let backgroundDecoration = NSCollectionLayoutDecorationItem.background(
+                elementKind: LocationWeatherViewController.sectionBackgroundDecorationElementKind)
+            section.decorationItems = [backgroundDecoration]
+    
+            return section
+        }
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(0.3))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 5)
+        let layoutConfig = UICollectionViewCompositionalLayoutConfiguration()
+        layoutConfig.interSectionSpacing = 32
+        layout.configuration = layoutConfig
         
-        let backgroundDecoration = NSCollectionLayoutDecorationItem.background(
-            elementKind: LocationWeatherViewController.sectionBackgroundDecorationElementKind)
-        let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .continuous
-        section.decorationItems = [backgroundDecoration]
-        
-        let layout = UICollectionViewCompositionalLayout(section: section)
         layout.register(SectionBackgroundDecorationView.self,
                         forDecorationViewOfKind: LocationWeatherViewController.sectionBackgroundDecorationElementKind)
         return layout
@@ -91,22 +115,40 @@ extension LocationWeatherViewController {
     }
     
     func createDataSource() {
-        collectionViewDataSource = DataSourceType.init(collectionView: weatherView.collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyWeatherCollectionViewCell.reuseIdentifier, for: indexPath) as! HourlyWeatherCollectionViewCell
+        collectionViewDataSource = DataSourceType(collectionView: weatherView.collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
-                case .hourly(let cellViewModel):
-                    cell.hourLabel.text = cellViewModel.hour
-                    cell.temperatureLabel.text = cellViewModel.temperature
-                    cell.imageView.image = cellViewModel.weatherIcon
+                case .hourly(let hourlyCellViewModel):
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyWeatherCollectionViewCell.reuseIdentifier, for: indexPath) as! HourlyWeatherCollectionViewCell
+                    cell.hourLabel.text = hourlyCellViewModel.hour
+                    cell.temperatureLabel.text = hourlyCellViewModel.temperature
+                    cell.imageView.image = hourlyCellViewModel.weatherIcon
+                    return cell
+                case .daily(let dailyCellViewModel):
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DailyWeatherCollectionViewCell.reuseIdentifier, for: indexPath) as! DailyWeatherCollectionViewCell
+                    cell.weekdayLabel.text = dailyCellViewModel.weekDayString
+                    cell.minTempLabel.text = dailyCellViewModel.minTemperature
+                    cell.maxTempLabel.text = dailyCellViewModel.maxTemperature
+                    cell.imageView.image = dailyCellViewModel.weatherIcon
+                    return cell
             }
-            return cell
         })
     }
     
-    func applySnapshot(with forecastViewModels: [HourlyForecastCellViewModel]) {
+    func applySnapshot(with cellViewModels: [DetailWeatherViewModel.Section: [ForecastCellViewModel]]) {
         var snapshot = SnapshotType()
-        snapshot.appendSections([.hourly])
-        snapshot.appendItems(forecastViewModels.map { DetailWeatherViewModel.Item.hourly($0) }, toSection: .hourly)
+        for section in DetailWeatherViewModel.Section.allCases {
+            snapshot.appendSections([section])
+            let viewModels = cellViewModels[section,default: []]
+            var items = [DetailWeatherViewModel.Item]()
+            
+            switch section {
+                case .hourly:
+                    items = viewModels.map { DetailWeatherViewModel.Item.hourly($0 as! HourlyForecastCellViewModel) }
+                case .daily:
+                    items = viewModels.map { DetailWeatherViewModel.Item.daily($0 as! DailyForecastCellViewModel) }
+            }
+            snapshot.appendItems(items, toSection: section)
+        }
         collectionViewDataSource.apply(snapshot)
     }
 }
