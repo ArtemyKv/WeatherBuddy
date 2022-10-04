@@ -81,6 +81,9 @@ extension LocationWeatherViewController {
         viewModel.windDirectionImage.bind { [weak self] image in
             self?.weatherView.weatherParametersView.windDirectionImage.image = image
         }
+        viewModel.weatherColor.bind { [weak self] color in
+            self?.weatherView.backgroundColor = UIColor.precipitationNight
+        }
     }
     
     func configureForecastCollectionView() {
@@ -157,7 +160,7 @@ extension LocationWeatherViewController {
         })
     }
     
-    func applySnapshot(with cellViewModels: [DetailWeatherViewModel.Section: [WeatherDetailsCellViewModel]]) {
+    func applySnapshot(with cellViewModels: [DetailWeatherViewModel.Section: [ForecastCellViewModel]]) {
         var snapshot = SnapshotType()
         for section in DetailWeatherViewModel.Section.allCases {
             snapshot.appendSections([section])
