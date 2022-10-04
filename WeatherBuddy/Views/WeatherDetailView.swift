@@ -9,49 +9,16 @@ import Foundation
 import UIKit
 
 class WeatherDetailView: UIView {
-    let cityLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 30, weight: .medium)
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        return label
-    }()
     
-    let areaLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        return label
-    }()
+    var currentWeatherIsVisible: Bool = true {
+        didSet {
+            currentWeatherView.isHidden = !currentWeatherIsVisible
+            weatherParametersView.isHidden = currentWeatherIsVisible
+        }
+    }
     
-    let temperatureLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 80, weight: .regular)
-        label.textAlignment = .right
-        return label
-    }()
-    
-    let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        label.textAlignment = .right
-        return label
-    }()
-    
-    let dateLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .light)
-        label.textAlignment = .left
-        return label
-    }()
-    
-    let imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.clipsToBounds = true
-        return imageView
-    }()
+    let currentWeatherView = CurrentWeatherView()
+    let weatherParametersView = WeatherParametersView()
     
     private let backgroundView: UIVisualEffectView = {
         let view = UIVisualEffectView()
@@ -67,78 +34,55 @@ class WeatherDetailView: UIView {
         return collectionView
     }()
     
-    private let innerVStack: UIStackView = {
-        let vStack = UIStackView()
-        vStack.axis = .vertical
-        vStack.alignment = .fill
-        vStack.distribution = .fill
-        vStack.spacing = 8
-        return vStack
-    }()
-    
-    private let middleHStack: UIStackView = {
-        let hStack = UIStackView()
-        hStack.axis = .horizontal
-        hStack.alignment = .fill
-        hStack.distribution = .fill
-        hStack.spacing = 8
-        return hStack
-    }()
-    
-    private let outerVStack: UIStackView = {
-        let vStack = UIStackView()
-        vStack.axis = .vertical
-        vStack.alignment = .fill
-        vStack.distribution = .fill
-        vStack.spacing = 8
-        return vStack
-    }()
-    
     private func setupView() {
         //Sample background color
         backgroundColor = .systemOrange
         
-        //Adding view to inner stack
-        innerVStack.addArrangedSubview(temperatureLabel)
-        innerVStack.addArrangedSubview(descriptionLabel)
-        temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        temperatureLabel.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        
-        //Adding view to middle stack
-        middleHStack.addArrangedSubview(imageView)
-        middleHStack.addArrangedSubview(innerVStack)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.widthAnchor.constraint(equalTo: middleHStack.widthAnchor, multiplier: 0.4).isActive = true
-        
-        //Adding view to outer stack
-        outerVStack.addArrangedSubview(cityLabel)
-        outerVStack.addArrangedSubview(areaLabel)
-        outerVStack.addArrangedSubview(middleHStack)
-        outerVStack.addArrangedSubview(dateLabel)
-        
         //Adding outer stack and collection view to superview
-        backgroundView.contentView.addSubview(outerVStack)
+        backgroundView.contentView.addSubview(currentWeatherView)
+        backgroundView.contentView.addSubview(weatherParametersView)
+        
+        currentWeatherIsVisible = true
+        
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(flipViews))
+        backgroundView.addGestureRecognizer(tapRecognizer)
+        
         self.addSubview(backgroundView)
-        outerVStack.translatesAutoresizingMaskIntoConstraints = false
+        currentWeatherView.translatesAutoresizingMaskIntoConstraints = false
+        weatherParametersView.translatesAutoresizingMaskIntoConstraints = false
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         
         self.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            outerVStack.leadingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.leadingAnchor, constant: 8),
-            outerVStack.trailingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.trailingAnchor, constant: -8),
-            outerVStack.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 20),
-            outerVStack.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -20),
+            currentWeatherView.leadingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.leadingAnchor, constant: 8),
+            currentWeatherView.trailingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.trailingAnchor, constant: -8),
+            currentWeatherView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 20),
+            currentWeatherView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -20),
+            weatherParametersView.leadingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.leadingAnchor, constant: 8),
+            weatherParametersView.trailingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.trailingAnchor, constant: -8),
+            weatherParametersView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 20),
+            weatherParametersView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -20),
+
             backgroundView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             backgroundView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            backgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 30),
+            backgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 20),
             collectionView.topAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: 32),
             collectionView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor),
         ])
         
+    }
+    
+    @objc func flipViews() {
+        UIView.transition(from: currentWeatherIsVisible ? currentWeatherView : weatherParametersView,
+                          to: currentWeatherIsVisible ? weatherParametersView : currentWeatherView,
+                          duration: 0.5,
+                          options: [.transitionFlipFromLeft, .showHideTransitionViews])
+        
+        currentWeatherIsVisible.toggle()
     }
     
     override init(frame: CGRect) {

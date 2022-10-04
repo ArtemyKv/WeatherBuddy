@@ -8,7 +8,7 @@
 import Foundation
 import UIKit.UIImage
 
-class DailyForecastCellViewModel: ForecastCellViewModel {
+class DailyForecastCellViewModel: WeatherDetailsCellViewModel {
     
     var dailyForecastWeather: DailyForecastWeather {
         didSet {

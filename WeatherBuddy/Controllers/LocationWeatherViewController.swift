@@ -25,7 +25,7 @@ class LocationWeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureCurrentWeatherView()
+        configureWeatherDetailView()
         configureForecastCollectionView()
         
         weatherView.collectionView.register(HourlyWeatherCollectionViewCell.self, forCellWithReuseIdentifier: HourlyWeatherCollectionViewCell.reuseIdentifier)
@@ -39,24 +39,47 @@ class LocationWeatherViewController: UIViewController {
 }
 
 extension LocationWeatherViewController {
-    func configureCurrentWeatherView() {
+    func configureWeatherDetailView() {
         viewModel.cityName.bind { [weak self] locationName in
-            self?.weatherView.cityLabel.text = locationName
+            self?.weatherView.currentWeatherView.cityLabel.text = locationName
+            self?.weatherView.weatherParametersView.cityLabel.text = locationName
         }
         viewModel.areaName.bind { [weak self] areaName in
-            self?.weatherView.areaLabel.text = areaName
+            self?.weatherView.currentWeatherView.areaLabel.text = areaName
         }
         viewModel.temperature.bind { [weak self] temperatureString in
-            self?.weatherView.temperatureLabel.text = temperatureString
+            self?.weatherView.currentWeatherView.temperatureLabel.text = temperatureString
+            self?.weatherView.weatherParametersView.temperatureLabel.text = temperatureString
         }
         viewModel.weatherDescription.bind { [weak self] weatherDescription in
-            self?.weatherView.descriptionLabel.text = weatherDescription
+            self?.weatherView.currentWeatherView.descriptionLabel.text = weatherDescription
         }
         viewModel.date.bind { [weak self] dateString in
-            self?.weatherView.dateLabel.text = dateString
+            self?.weatherView.currentWeatherView.dateLabel.text = dateString
         }
         viewModel.weatherIcon.bind { [weak self] image in
-            self?.weatherView.imageView.image = image
+            self?.weatherView.currentWeatherView.imageView.image = image
+        }
+        viewModel.feelsLikeTemp.bind { [weak self] temperatureString in
+            self?.weatherView.weatherParametersView.feelsLikeLabel.text = temperatureString
+        }
+        viewModel.pressure.bind { [weak self] pressureString in
+            self?.weatherView.weatherParametersView.pressureLabel.text = pressureString
+        }
+        viewModel.humidity.bind { [weak self] humidityString in
+            self?.weatherView.weatherParametersView.humidityLabel.text = humidityString
+        }
+        viewModel.visibility.bind { [weak self] visibilityString in
+            self?.weatherView.weatherParametersView.visibilityLabel.text = visibilityString
+        }
+        viewModel.windSpeed.bind { [weak self] speedString in
+            self?.weatherView.weatherParametersView.windSpeedLabel.text = speedString
+        }
+        viewModel.windDirection.bind { [weak self] directionString in
+            self?.weatherView.weatherParametersView.windDirectionLabel.text = directionString
+        }
+        viewModel.windDirectionImage.bind { [weak self] image in
+            self?.weatherView.weatherParametersView.windDirectionImage.image = image
         }
     }
     
@@ -134,7 +157,7 @@ extension LocationWeatherViewController {
         })
     }
     
-    func applySnapshot(with cellViewModels: [DetailWeatherViewModel.Section: [ForecastCellViewModel]]) {
+    func applySnapshot(with cellViewModels: [DetailWeatherViewModel.Section: [WeatherDetailsCellViewModel]]) {
         var snapshot = SnapshotType()
         for section in DetailWeatherViewModel.Section.allCases {
             snapshot.appendSections([section])

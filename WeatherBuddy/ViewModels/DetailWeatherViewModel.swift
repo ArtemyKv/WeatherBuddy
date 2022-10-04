@@ -35,6 +35,13 @@ class DetailWeatherViewModel {
     var weatherDescription = Box(value: "")
     var date = Box(value: "")
     var weatherIcon: Box<UIImage?> = Box(value: nil)
+    var feelsLikeTemp = Box(value: "")
+    var pressure = Box(value: "")
+    var humidity = Box(value: "")
+    var visibility = Box(value: "")
+    var windSpeed = Box(value: "")
+    var windDirection = Box(value: "")
+    var windDirectionImage: Box<UIImage?> = Box(value: nil)
     
     //MARK: - CollectionView sections and items
     enum Section: CaseIterable {
@@ -49,6 +56,7 @@ class DetailWeatherViewModel {
     
     //MARK: - Methods
     private func configureBasicWeatherInfo(with weather: Weather) {
+        //Current weather info
         cityName.value = location?.name ?? ""
         dateFormatter.timeZone = location?.timezone
         
@@ -64,6 +72,18 @@ class DetailWeatherViewModel {
         weatherDescription.value = weather.description
         date.value = dateFormatter.string(from: Date())
         weatherIcon.value = UIImage(named: weather.conditionIconID)
+        
+        //Weather parameters info
+        feelsLikeTemp.value = "\(Int(weather.parameters.feelsLikeTemperature))º"
+        pressure.value = "\(weather.parameters.pressure) hPa"
+        humidity.value = "\(weather.parameters.humidity) %"
+        visibility.value = "\(weather.visibility) m"
+        windSpeed.value = "\(weather.wind.speed) meter/sec"
+        
+        let windDirectionInfo = getWindDirectionWith(degrees: weather.wind.degrees)
+        windDirection.value = windDirectionInfo.windDirection.rawValue
+        windDirectionImage.value = windDirectionInfo.windDirectionImage
+        
     }
     
     private func configureForecastViewModels(with forecast: [Weather]) {
@@ -124,7 +144,6 @@ class DetailWeatherViewModel {
     init() {
         locationService.delegate = self
     }
-    
 }
 
 extension DetailWeatherViewModel: LocationServiceDelegate {
@@ -135,8 +154,41 @@ extension DetailWeatherViewModel: LocationServiceDelegate {
             self.fetchWeatherData(for: location)
         }
     }
+}
+
+extension DetailWeatherViewModel {
     
+    enum WindDirection: String {
+        case north = "N"
+        case northWest = "NW"
+        case west = "W"
+        case southWest = "SW"
+        case south = "S"
+        case southEast = "SE"
+        case east = "E"
+        case northEast = "NE"
+    }
     
-    
-    
+    func getWindDirectionWith(degrees: Double) -> (windDirection: WindDirection, windDirectionImage: UIImage?) {
+        switch degrees {
+        case 0..<25:
+                return (.north, UIImage(systemName: "arrow.up"))
+        case 25..<65:
+            return (.northEast, UIImage(systemName: "arrow.up.right"))
+        case 65..<115:
+            return (.east, UIImage(systemName: "arrow.right"))
+        case 115..<155:
+            return (.southEast, UIImage(systemName: "arrow.down.right"))
+        case 155..<205:
+            return (.south, UIImage(systemName: "arrow.down"))
+        case 205..<245:
+            return (.southWest, UIImage(systemName: "arrow.down.left"))
+        case 245..<295:
+            return (.west, UIImage(systemName: "arrow.left"))
+        case 295..<335:
+            return (.northWest, UIImage(systemName: "arrow.up.left"))
+        default:
+            return (.north, UIImage(systemName: "arrow.up"))
+        }
+    }
 }
