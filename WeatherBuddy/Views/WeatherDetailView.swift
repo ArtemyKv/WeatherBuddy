@@ -69,7 +69,7 @@ class WeatherDetailView: UIView {
             backgroundView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             backgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 20),
             collectionView.topAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: 32),
-            collectionView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor,constant: -40),
             collectionView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor),
         ])

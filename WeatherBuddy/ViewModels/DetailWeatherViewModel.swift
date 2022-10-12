@@ -10,16 +10,22 @@ import UIKit.UIImage
 
 class DetailWeatherViewModel {
     //MARK: - Model properties
-    private var location: Location?
-    private var currentWeather: Weather?
-    private var forecast: [Weather]?
+    var location: Location
+    
+    var currentWeather: Weather? {
+        didSet {
+            guard let currentWeather = currentWeather else { return }
+            configureBasicWeatherInfo(with: currentWeather)
+        }
+    }
+    var forecast: [Weather]? {
+        didSet {
+            guard let forecast = forecast else { return }
+            configureForecastViewModels(with: forecast)
+        }
+    }
     
     var forecastCellViewModels: Box<[Section: [ForecastCellViewModel]]> = Box(value: [:])
-    
-    //MARK: - Service properties
-    private let geocodingService = GeocodingService()
-    private let weatherFetchingService = WeatherFetchingService()
-    private let locationService = LocationService()
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -58,15 +64,15 @@ class DetailWeatherViewModel {
     //MARK: - Methods
     private func configureBasicWeatherInfo(with weather: Weather) {
         //Current weather info
-        cityName.value = location?.name ?? ""
-        dateFormatter.timeZone = location?.timezone
+        cityName.value = location.name ?? ""
+        dateFormatter.timeZone = location.timeZone
         
-        if let area = location?.administrativeArea, let country = location?.country {
+        if let area = location.administrativeArea, let country = location.country {
             areaName.value = area + ", " + country
-        } else if let area = location?.administrativeArea, location?.country == nil {
+        } else if let area = location.administrativeArea, location.country == nil {
             areaName.value = area
         } else {
-            areaName.value = location?.country ?? " "
+            areaName.value = location.country ?? " "
         }
         
         temperature.value = "\(Int(weather.parameters.temperature))º"
@@ -97,7 +103,7 @@ class DetailWeatherViewModel {
         forecastCellViewModels.value[.hourly] = []
         let oneDayWeatherItemsArray = Array(forecast.prefix(through: 15))
         oneDayWeatherItemsArray.forEach {
-            self.forecastCellViewModels.value[.hourly]?.append(HourlyForecastCellViewModel(weatherItem: $0, timeZone: location?.timezone))
+            self.forecastCellViewModels.value[.hourly]?.append(HourlyForecastCellViewModel(weatherItem: $0, timeZone: location.timeZone))
         }
     }
     
@@ -130,31 +136,8 @@ class DetailWeatherViewModel {
         }
     }
     
-    private func fetchWeatherData(for location: Location) {
-        weatherFetchingService.fetchCurrentWeatherData(for: location) { [weak self] weather, error in
-            guard let self = self, let weather = weather else { return }
-            self.currentWeather = weather
-            self.configureBasicWeatherInfo(with: weather)
-        }
-        weatherFetchingService.fetchForecastWeatherData(for: location) { [weak self] response, error in
-            guard let self = self, let forecast = response?.list else { return }
-            self.forecast = forecast
-            self.configureForecastViewModels(with: forecast)
-        }
-    }
-    
-    init() {
-        locationService.delegate = self
-    }
-}
-
-extension DetailWeatherViewModel: LocationServiceDelegate {
-    func updateLocationWith(latitude: Double, longitude: Double) {
-        geocodingService.getLocationFrom(latitude: latitude, longitude: longitude) { [weak self] location in
-            guard let self = self else { return }
-            self.location = location
-            self.fetchWeatherData(for: location)
-        }
+    init(location: Location) {
+        self.location = location
     }
 }
 

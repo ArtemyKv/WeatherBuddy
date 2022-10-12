@@ -10,12 +10,22 @@ import UIKit
 
 class LocationWeatherViewController: UIViewController {
     
+    init(viewModel: DetailWeatherViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     typealias DataSourceType = UICollectionViewDiffableDataSource<DetailWeatherViewModel.Section, DetailWeatherViewModel.Item>
     typealias SnapshotType = NSDiffableDataSourceSnapshot<DetailWeatherViewModel.Section, DetailWeatherViewModel.Item>
     
     static let sectionBackgroundDecorationElementKind = "section-background-element-kind"
     
-    let viewModel = DetailWeatherViewModel()
+    var viewModel: DetailWeatherViewModel
     var collectionViewDataSource: DataSourceType!
     
     var weatherView: WeatherDetailView! {
