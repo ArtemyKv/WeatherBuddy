@@ -15,8 +15,7 @@ class LocationsListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .add)
-        self.navigationItem.title = "Weather Buddy"
+        configureNavigationItem()
         viewModel = weatherController.locationsListViewModel
         tableView.register(LocationsListTableViewCell.self, forCellReuseIdentifier: LocationsListTableViewCell.reuseIdentifier)
         viewModel.favoriteLocationsCellViewModels.bind { [weak self] _ in
@@ -29,6 +28,22 @@ class LocationsListViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.isNavigationBarHidden = false
+    }
+    
+    func configureNavigationItem() {
+        let addButton = UIBarButtonItem(systemItem: .add)
+        addButton.tintColor = .black
+        addButton.target = self
+        addButton.action = #selector(addButtonTapped)
+        navigationItem.leftBarButtonItem = addButton
+        navigationItem.title = "Weather Buddy"
+    }
+    
+    @objc func addButtonTapped() {
+        let searchVC = SearchTableViewController()
+        searchVC.weatherController = self.weatherController
+        let navigationVC = UINavigationController(rootViewController: searchVC)
+        present(navigationVC, animated: true)
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
