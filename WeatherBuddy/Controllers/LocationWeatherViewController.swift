@@ -92,7 +92,7 @@ extension LocationWeatherViewController {
             self?.weatherView.weatherParametersView.windDirectionImage.image = image
         }
         viewModel.weatherColor.bind { [weak self] color in
-            self?.weatherView.backgroundColor = UIColor.precipitationNight
+            self?.weatherView.backgroundColor = color
         }
     }
     
