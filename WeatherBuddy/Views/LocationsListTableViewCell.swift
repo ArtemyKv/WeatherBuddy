@@ -68,10 +68,10 @@ class LocationsListTableViewCell: UITableViewCell {
         self.contentView.addSubview(vStack)
         
         NSLayoutConstraint.activate([
-            vStack.topAnchor.constraint(equalTo: self.topAnchor),
-            vStack.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            vStack.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            vStack.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+            vStack.topAnchor.constraint(equalTo: self.contentView.topAnchor),
+            vStack.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+            vStack.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            vStack.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -20)
         ])
     }
     

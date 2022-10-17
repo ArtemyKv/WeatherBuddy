@@ -36,6 +36,7 @@ class LocationsListViewController: UITableViewController {
         addButton.target = self
         addButton.action = #selector(addButtonTapped)
         navigationItem.leftBarButtonItem = addButton
+        navigationItem.rightBarButtonItem = self.editButtonItem
         navigationItem.title = "Weather Buddy"
     }
     
@@ -71,12 +72,25 @@ class LocationsListViewController: UITableViewController {
         cell.configureCell(withViewModel: cellViewModel)
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 88
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let pageVC = WeatherPagesViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
         pageVC.initialPage = (indexPath.section != 0 ? (indexPath.row + 1) : 0)
         pageVC.detailWeatherViewModels = weatherController.detailWeatherViewModels
         self.navigationController?.pushViewController(pageVC, animated: true)
+    }
+    
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == 0 ? false : true
+    }
+    
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+
     }
 }
 
