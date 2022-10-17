@@ -8,11 +8,16 @@
 import Foundation
 import UIKit
 
+protocol SearchTableViewControllerDelegate: AnyObject {
+    func addLocation(withSearchResult searchResult: SearchingService.SearchResult)
+}
+
 class SearchTableViewController: UITableViewController {
     
     var searchController: UISearchController!
-    var weatherController: WeatherController!
     var searchingService: SearchingService!
+    
+    var delegate: SearchTableViewControllerDelegate?
     
     var searchResults: [SearchingService.SearchResult] = []
     
@@ -41,15 +46,17 @@ class SearchTableViewController: UITableViewController {
         cell.contentConfiguration = config
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let searchResult = searchResults[indexPath.row]
+        delegate?.addLocation(withSearchResult: searchResult)
+        navigationController?.dismiss(animated: true)
+    }
 }
 
 extension SearchTableViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         navigationController?.dismiss(animated: true)
-    }
-
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

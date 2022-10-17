@@ -41,7 +41,7 @@ class LocationsListViewController: UITableViewController {
     
     @objc func addButtonTapped() {
         let searchVC = SearchTableViewController()
-        searchVC.weatherController = self.weatherController
+        searchVC.delegate = self
         let navigationVC = UINavigationController(rootViewController: searchVC)
         present(navigationVC, animated: true)
     }
@@ -78,4 +78,15 @@ class LocationsListViewController: UITableViewController {
         pageVC.detailWeatherViewModels = weatherController.detailWeatherViewModels
         self.navigationController?.pushViewController(pageVC, animated: true)
     }
+}
+
+extension LocationsListViewController: SearchTableViewControllerDelegate {
+    func addLocation(withSearchResult searchResult: SearchingService.SearchResult) {
+        weatherController.addLocationToFavorites(withAddressString: searchResult.title) { [weak self] in
+            self?.tableView.reloadData()
+        }
+        
+    }
+    
+    
 }

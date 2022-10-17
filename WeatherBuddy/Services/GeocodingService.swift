@@ -16,18 +16,18 @@ class GeocodingService {
     
     func getLocation(from adressString: String, completion: @escaping (Location) -> Void) {
         geocoder.geocodeAddressString(adressString) { placemarks, error in
-            self.geocodingCompletion(placemarks: placemarks, error: error, completion: completion)
+            self.geocodingCompletion(isCurrentLocation: false, placemarks: placemarks, error: error, completion: completion)
         }
     }
     
     func getLocationFrom(latitude: Double, longitude: Double, completion: @escaping (Location) -> Void) {
         let location = CLLocation(latitude: latitude, longitude: longitude)
         geocoder.reverseGeocodeLocation(location) { placemarks, error in
-            self.geocodingCompletion(placemarks: placemarks, error: error, completion: completion)
+            self.geocodingCompletion(isCurrentLocation: true, placemarks: placemarks, error: error, completion: completion)
         }
     }
     
-    private func geocodingCompletion(placemarks: [CLPlacemark]?, error: Error?, completion: @escaping (Location) -> Void) {
+    private func geocodingCompletion(isCurrentLocation: Bool, placemarks: [CLPlacemark]?, error: Error?, completion: @escaping (Location) -> Void) {
         guard error == nil else {
             print("Error getting location")
             return
@@ -39,7 +39,7 @@ class GeocodingService {
             print("No such location")
             return
         }
-        let location = Location(context: coreDataStack.childContext)
+        let location = Location(context: isCurrentLocation ? coreDataStack.childContext : coreDataStack.managedContext)
         location.name = placemark.locality
         location.country = placemark.country
         location.administrativeArea = placemark.administrativeArea

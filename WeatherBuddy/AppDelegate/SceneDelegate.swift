@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        let rootVC = LocationsListViewController()
+        let rootVC = LocationsListViewController(style: .grouped)
         let navigationVC = UINavigationController(rootViewController: rootVC)
         self.window = window
         window.rootViewController = navigationVC

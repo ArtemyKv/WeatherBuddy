@@ -9,11 +9,8 @@ import Foundation
 
 class LocationsListViewModel {
     
-    var briefWeatherForFavoriteLocation: [Location: BriefCurrentWeather] = [:] {
-        didSet {
-            createFavoriteCellViewModels()
-        }
-    }
+    var briefWeatherForFavoriteLocation: [Location: BriefCurrentWeather] = [:]
+    
     var currentLocation: Location?
     var briefWeatherForeCurrentLocation: BriefCurrentWeather? {
         didSet {
@@ -23,22 +20,32 @@ class LocationsListViewModel {
     
     var favoriteLocationsCellViewModels: Box<[LocationsListCellViewModel]> = Box(value: [])
     var currentLocationCellViewModel: Box<LocationsListCellViewModel?> = Box(value: nil)
+ 
+    func createCurrentCellViewModel() {
+        guard let location = currentLocation else { return }
+        currentLocationCellViewModel.value = cellViewModel(forLocation: location, isCurrentLocation: true)
+    }
     
-    func createFavoriteCellViewModels() {
+    func createInitialFavoriteCellViewModels() {
         guard !briefWeatherForFavoriteLocation.isEmpty else { return }
-
         for location in briefWeatherForFavoriteLocation.keys.sorted(by: { $0.order < $1.order }) {
-            let briefWeather = briefWeatherForFavoriteLocation[location]!
-            let locationName = location.name ?? location.administrativeArea ?? "No location name"
-            let cellViewModel = LocationsListCellViewModel(briefCurrentWeather: briefWeather, locationName: locationName)
-            favoriteLocationsCellViewModels.value.append(cellViewModel)
+            if let cellViewModel = cellViewModel(forLocation: location, isCurrentLocation: false) {
+                favoriteLocationsCellViewModels.value.append(cellViewModel)
+            }
         }
     }
     
-    func createCurrentCellViewModel() {
-        guard let location = currentLocation, let briefWeather = briefWeatherForeCurrentLocation else { return }
+    func createCellViewModelForNewLocation(location: Location) {
+        guard let cellViewModel = cellViewModel(forLocation: location, isCurrentLocation: false) else { return }
+        favoriteLocationsCellViewModels.value.append(cellViewModel)
+    }
+    
+    func cellViewModel(forLocation location: Location, isCurrentLocation: Bool) -> LocationsListCellViewModel? {
+        guard
+            let briefWeather = isCurrentLocation ? briefWeatherForeCurrentLocation : briefWeatherForFavoriteLocation[location]
+        else { return nil }
         let locationName = location.name ?? location.administrativeArea ?? "No location name"
         let cellViewModel = LocationsListCellViewModel(briefCurrentWeather: briefWeather, locationName: locationName)
-        currentLocationCellViewModel.value = cellViewModel
+        return cellViewModel
     }
 }
