@@ -22,7 +22,9 @@ class LocationsListDataSource: UITableViewDiffableDataSource<LocationsListViewMo
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        self.deletionHandler?(indexPath.row)
+        if editingStyle == .delete {
+            self.deletionHandler?(indexPath.row)
+        }
     }
     
 }

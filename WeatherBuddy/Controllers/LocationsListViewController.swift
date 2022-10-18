@@ -20,6 +20,7 @@ class LocationsListViewController: UITableViewController {
         super.viewDidLoad()
         setupDataSource()
         setupTableViewReordering()
+        setupRowDeletion()
         configureNavigationItem()
         viewModel = weatherController.locationsListViewModel
         tableView.register(LocationsListTableViewCell.self, forCellReuseIdentifier: LocationsListTableViewCell.reuseIdentifier)
@@ -76,6 +77,14 @@ class LocationsListViewController: UITableViewController {
             guard let self = self else { return }
             self.viewModel.moveCell(at: sourceIndex, to: destinationIndex)
             self.weatherController.handleReorderingFavoriteLocations(at: sourceIndex, to: destinationIndex)
+        }
+    }
+    
+    func setupRowDeletion() {
+        self.dataSource.deletionHandler = { [weak self] index in
+            guard let self = self else { return }
+            self.viewModel.deleteCell(at: index)
+            self.weatherController.handleLocationDeletion(at: index)
         }
     }
     

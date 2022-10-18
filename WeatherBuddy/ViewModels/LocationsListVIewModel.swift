@@ -56,7 +56,10 @@ class LocationsListViewModel {
     func moveCell(at sourceIndex: Int, to destinationIndex: Int) {
         let movedCellViewModel = self.favoriteLocationsCellViewModels.value.remove(at: sourceIndex)
         self.favoriteLocationsCellViewModels.value.insert(movedCellViewModel, at: destinationIndex)
-        
+    }
+    
+    func deleteCell( at index: Int) {
+        self.favoriteLocationsCellViewModels.value.remove(at: index)
         
     }
 }

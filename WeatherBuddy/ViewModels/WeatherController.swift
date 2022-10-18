@@ -141,6 +141,14 @@ class WeatherController {
         }
         coreDataStack.saveContext()
     }
+    
+    func handleLocationDeletion( at index: Int) {
+        let location = favoriteLocations.remove(at: index)
+        detailWeatherViewModels.remove(at: index + 1)
+        locationsListViewModel.briefWeatherForFavoriteLocation.removeValue(forKey: location)
+        coreDataStack.managedContext.delete(location)
+        coreDataStack.saveContext()
+    }
 }
 
 extension WeatherController: LocationServiceDelegate {
