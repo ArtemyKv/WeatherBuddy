@@ -129,6 +129,18 @@ class WeatherController {
             }
         }
     }
+    
+    func handleReorderingFavoriteLocations(at sourceIndex: Int, to destinationIndex: Int) {
+        let location = self.favoriteLocations.remove(at: sourceIndex)
+        self.favoriteLocations.insert(location, at: destinationIndex)
+        let viewModel = self.detailWeatherViewModels.remove(at: sourceIndex + 1)
+        self.detailWeatherViewModels.insert(viewModel, at: destinationIndex + 1)
+        
+        for (i, location) in favoriteLocations.enumerated() {
+            location.order = Int32(i)
+        }
+        coreDataStack.saveContext()
+    }
 }
 
 extension WeatherController: LocationServiceDelegate {

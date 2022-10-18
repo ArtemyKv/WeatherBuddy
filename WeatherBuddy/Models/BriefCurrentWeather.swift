@@ -12,3 +12,5 @@ struct BriefCurrentWeather {
     var condition: String
     var iconID: String
 }
+
+extension BriefCurrentWeather: Equatable, Hashable { }

@@ -30,3 +30,15 @@ class LocationsListCellViewModel {
         configureViewModel()
     }
 }
+
+extension LocationsListCellViewModel: Hashable {
+    static func == (lhs: LocationsListCellViewModel, rhs: LocationsListCellViewModel) -> Bool {
+        (lhs.briefCurrentWeather == rhs.briefCurrentWeather) && (lhs.locationName == rhs.locationName)
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(locationName)
+        hasher.combine(briefCurrentWeather)
+    }
+    
+}

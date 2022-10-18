@@ -9,20 +9,25 @@ import Foundation
 import UIKit
 
 class LocationsListViewController: UITableViewController {
+    typealias SnapshotType = NSDiffableDataSourceSnapshot<LocationsListViewModel.Section, LocationsListCellViewModel>
     
     let weatherController = WeatherController()
     var viewModel: LocationsListViewModel!
+    var dataSource: LocationsListDataSource!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupDataSource()
+        setupTableViewReordering()
         configureNavigationItem()
         viewModel = weatherController.locationsListViewModel
         tableView.register(LocationsListTableViewCell.self, forCellReuseIdentifier: LocationsListTableViewCell.reuseIdentifier)
         viewModel.favoriteLocationsCellViewModels.bind { [weak self] _ in
-            self?.tableView.reloadData()
+            self?.applySnapshot()
         }
         viewModel.currentLocationCellViewModel.bind { [weak self] _ in
-            self?.tableView.reloadData()
+            self?.applySnapshot()
         }
     }
     
@@ -47,30 +52,31 @@ class LocationsListViewController: UITableViewController {
         present(navigationVC, animated: true)
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+    func setupDataSource() {
+        let dataSource = LocationsListDataSource(tableView: tableView) { tableView, indexPath, cellViewModel in
+            let cell = tableView.dequeueReusableCell(withIdentifier: LocationsListTableViewCell.reuseIdentifier, for: indexPath) as! LocationsListTableViewCell
+            cell.configureCell(withViewModel: cellViewModel)
+            return cell
+        }
+        self.dataSource = dataSource
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
-            return (viewModel.currentLocationCellViewModel.value != nil ? 1 : 0)
-        } else {
-            return viewModel.favoriteLocationsCellViewModels.value.count
+    func applySnapshot() {
+        var snapshot = SnapshotType()
+        snapshot.appendSections(LocationsListViewModel.Section.allCases)
+        if let currentLocationCellViewModel = viewModel.currentLocationCellViewModel.value {
+            snapshot.appendItems([currentLocationCellViewModel], toSection: .current)
         }
+        snapshot.appendItems(viewModel.favoriteLocationsCellViewModels.value, toSection: .favorite)
+        dataSource.apply(snapshot)
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: LocationsListTableViewCell.reuseIdentifier) as! LocationsListTableViewCell
-        var cellViewModel: LocationsListCellViewModel
-        
-        if indexPath.section == 0 {
-            cellViewModel = viewModel.currentLocationCellViewModel.value!
-        } else {
-            cellViewModel = viewModel.favoriteLocationsCellViewModels.value[indexPath.row]
+    func setupTableViewReordering() {
+        self.dataSource.reorderingHandler = { [weak self] sourceIndex, destinationIndex in
+            guard let self = self else { return }
+            self.viewModel.moveCell(at: sourceIndex, to: destinationIndex)
+            self.weatherController.handleReorderingFavoriteLocations(at: sourceIndex, to: destinationIndex)
         }
-        
-        cell.configureCell(withViewModel: cellViewModel)
-        return cell
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -85,12 +91,8 @@ class LocationsListViewController: UITableViewController {
         self.navigationController?.pushViewController(pageVC, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section == 0 ? false : true
-    }
-    
-    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-
+    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        return proposedDestinationIndexPath.section == 0 ? sourceIndexPath : proposedDestinationIndexPath
     }
 }
 

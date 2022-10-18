@@ -10,7 +10,6 @@ import Foundation
 class LocationsListViewModel {
     
     var briefWeatherForFavoriteLocation: [Location: BriefCurrentWeather] = [:]
-    
     var currentLocation: Location?
     var briefWeatherForeCurrentLocation: BriefCurrentWeather? {
         didSet {
@@ -20,6 +19,11 @@ class LocationsListViewModel {
     
     var favoriteLocationsCellViewModels: Box<[LocationsListCellViewModel]> = Box(value: [])
     var currentLocationCellViewModel: Box<LocationsListCellViewModel?> = Box(value: nil)
+    
+    enum Section: CaseIterable {
+        case current
+        case favorite
+    }
  
     func createCurrentCellViewModel() {
         guard let location = currentLocation else { return }
@@ -47,5 +51,12 @@ class LocationsListViewModel {
         let locationName = location.name ?? location.administrativeArea ?? "No location name"
         let cellViewModel = LocationsListCellViewModel(briefCurrentWeather: briefWeather, locationName: locationName)
         return cellViewModel
+    }
+    
+    func moveCell(at sourceIndex: Int, to destinationIndex: Int) {
+        let movedCellViewModel = self.favoriteLocationsCellViewModels.value.remove(at: sourceIndex)
+        self.favoriteLocationsCellViewModels.value.insert(movedCellViewModel, at: destinationIndex)
+        
+        
     }
 }
