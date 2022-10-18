@@ -135,10 +135,7 @@ class WeatherController {
         self.favoriteLocations.insert(location, at: destinationIndex)
         let viewModel = self.detailWeatherViewModels.remove(at: sourceIndex + 1)
         self.detailWeatherViewModels.insert(viewModel, at: destinationIndex + 1)
-        
-        for (i, location) in favoriteLocations.enumerated() {
-            location.order = Int32(i)
-        }
+        updateLocationsOrder()
         coreDataStack.saveContext()
     }
     
@@ -147,7 +144,14 @@ class WeatherController {
         detailWeatherViewModels.remove(at: index + 1)
         locationsListViewModel.briefWeatherForFavoriteLocation.removeValue(forKey: location)
         coreDataStack.managedContext.delete(location)
+        updateLocationsOrder()
         coreDataStack.saveContext()
+    }
+    
+    private func updateLocationsOrder() {
+        for (i, location) in favoriteLocations.enumerated() {
+            location.order = Int32(i)
+        }
     }
 }
 
