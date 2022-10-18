@@ -83,7 +83,6 @@ class LocationsListTableViewCell: UITableViewCell {
         
         self.contentView.addSubview(hStack)
         self.contentView.layer.cornerRadius = 20
-        self.contentView.backgroundColor = .lightGray
         
         NSLayoutConstraint.activate([
             temperatureLabel.widthAnchor.constraint(equalToConstant: 65),
@@ -99,6 +98,7 @@ class LocationsListTableViewCell: UITableViewCell {
         self.conditionImageView.image = viewModel.image
         self.conditionLabel.text = viewModel.condition
         self.temperatureLabel.text = viewModel.temperature
+        self.contentView.backgroundColor = viewModel.backgroundColor
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

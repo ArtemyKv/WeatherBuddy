@@ -16,12 +16,14 @@ class LocationsListCellViewModel {
     var location = ""
     var condition = ""
     var image: UIImage? = nil
+    var backgroundColor: UIColor = .clear
     
     func configureViewModel() {
         temperature = "\(Int(briefCurrentWeather.temperature))º"
         location = locationName
         condition = briefCurrentWeather.condition
         image = UIImage(named: briefCurrentWeather.iconID)
+        backgroundColor = UIColor.weatherColor(forIconID: briefCurrentWeather.iconID)
     }
     
     init(briefCurrentWeather: BriefCurrentWeather, locationName: String) {

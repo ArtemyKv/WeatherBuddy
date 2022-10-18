@@ -91,7 +91,7 @@ class DetailWeatherViewModel {
         windDirection.value = windDirectionInfo.windDirection.rawValue
         windDirectionImage.value = windDirectionInfo.windDirectionImage
         
-        weatherColor.value = weatherColor(withIconID: weather.conditionIconID)
+        weatherColor.value = UIColor.weatherColor(forIconID: weather.conditionIconID)
     }
     
     private func configureForecastViewModels(with forecast: [Weather]) {
@@ -174,33 +174,6 @@ extension DetailWeatherViewModel {
             return (.northWest, UIImage(systemName: "arrow.up.left"))
         default:
             return (.north, UIImage(systemName: "arrow.up"))
-        }
-    }
-}
-
-extension DetailWeatherViewModel {
-    func weatherColor(withIconID iconID: String) -> UIColor {
-        switch iconID {
-            case "01d", "02d":
-                return UIColor.clearDay
-            case "01n", "02n":
-                return UIColor.clearNight
-            case "03d", "04d":
-                return UIColor.cloudyDay
-            case "03n", "04n":
-                return UIColor.cloudyNight
-            case "09d", "10d", "13d":
-                return UIColor.precipitationDay
-            case "09n", "10n", "13n":
-                return UIColor.precipitationNight
-            case "50d":
-                return UIColor.fogDay
-            case "50n":
-                return UIColor.fogNight
-            case "11d", "11n":
-                return UIColor.storm
-            default:
-                return UIColor.systemBackground
         }
     }
 }
