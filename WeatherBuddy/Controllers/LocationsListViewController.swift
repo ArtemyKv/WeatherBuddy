@@ -24,6 +24,9 @@ class LocationsListViewController: UITableViewController {
         configureNavigationItem()
         viewModel = weatherController.locationsListViewModel
         tableView.register(LocationsListTableViewCell.self, forCellReuseIdentifier: LocationsListTableViewCell.reuseIdentifier)
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = .white
+        
         viewModel.favoriteLocationsCellViewModels.bind { [weak self] _ in
             self?.applySnapshot()
         }
