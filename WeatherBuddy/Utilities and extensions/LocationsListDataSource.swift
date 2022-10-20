@@ -21,6 +21,10 @@ class LocationsListDataSource: UITableViewDiffableDataSource<LocationsListViewMo
         self.reorderingHandler?(sourceIndexPath.row, destinationIndexPath.row)
     }
     
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == 0 ? false : true
+    }
+    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             self.deletionHandler?(indexPath.row)
