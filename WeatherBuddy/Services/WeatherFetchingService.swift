@@ -28,10 +28,11 @@ class WeatherFetchingService {
         static let forecast = "forecast"
     }
     
-    private func fetchWeatherData<T: Codable>(dataType: T.Type,
-                                      weatherInfoType: String,
-                                      location: Location,
-                                      completion: @escaping (T?, WeatherFetchingError?) -> Void) {
+    private func fetchWeatherData<T: Codable>(
+        weatherInfoType: String,
+        location: Location,
+        completion: @escaping (T?, WeatherFetchingError?) -> Void
+    ) {
         var components = URLComponents()
         components.scheme = scheme
         components.host = host
@@ -86,10 +87,10 @@ class WeatherFetchingService {
     }
     
     func fetchCurrentWeatherData(for location: Location, completion: @escaping (Weather?, WeatherFetchingError?) -> Void ) {
-        fetchWeatherData(dataType: Weather.self, weatherInfoType: WeatherInfoType.currentWeather, location: location, completion: completion)
+        fetchWeatherData(weatherInfoType: WeatherInfoType.currentWeather, location: location, completion: completion)
     }
     
     func fetchForecastWeatherData(for location: Location, completion: @escaping (ForecastResponse?, WeatherFetchingError?) -> Void ) {
-        fetchWeatherData(dataType: ForecastResponse.self, weatherInfoType: WeatherInfoType.forecast, location: location, completion: completion)
+        fetchWeatherData(weatherInfoType: WeatherInfoType.forecast, location: location, completion: completion)
     }
 }
