@@ -22,21 +22,28 @@ class LocationsListViewController: UITableViewController {
         setupTableViewReordering()
         setupRowDeletion()
         configureNavigationItem()
-        viewModel = weatherController.locationsListViewModel
-        tableView.register(LocationsListTableViewCell.self, forCellReuseIdentifier: LocationsListTableViewCell.reuseIdentifier)
-        tableView.separatorStyle = .none
-        tableView.backgroundColor = .white
-        
-        viewModel.favoriteLocationsCellViewModels.bind { [weak self] _ in
-            self?.applySnapshot()
-        }
-        viewModel.currentLocationCellViewModel.bind { [weak self] _ in
-            self?.applySnapshot()
-        }
+        setupViewModel()
+        configureTableView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.isNavigationBarHidden = false
+    }
+    
+    func setupViewModel() {
+        viewModel = weatherController.locationsListViewModel
+        viewModel.favoriteLocationsCellViewModels.bind { [weak self] _ in
+            self?.applySnapshot(isReloadingData: false)
+        }
+        viewModel.currentLocationCellViewModel.bind { [weak self] _ in
+            self?.applySnapshot(isReloadingData: false)
+        }
+    }
+    
+    func configureTableView() {
+        tableView.register(LocationsListTableViewCell.self, forCellReuseIdentifier: LocationsListTableViewCell.reuseIdentifier)
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = .white
     }
     
     func configureNavigationItem() {
@@ -59,20 +66,38 @@ class LocationsListViewController: UITableViewController {
     func setupDataSource() {
         let dataSource = LocationsListDataSource(tableView: tableView) { tableView, indexPath, cellViewModel in
             let cell = tableView.dequeueReusableCell(withIdentifier: LocationsListTableViewCell.reuseIdentifier, for: indexPath) as! LocationsListTableViewCell
-            cell.configureCell(withViewModel: cellViewModel)
+            cellViewModel.location.bind { locationName in
+                cell.locationLabel.text = locationName
+            }
+            cellViewModel.image.bind { image in
+                cell.conditionImageView.image = image
+            }
+            cellViewModel.condition.bind { condition in
+                cell.conditionLabel.text = condition
+            }
+            cellViewModel.temperature.bind { temperature in
+                cell.temperatureLabel.text = temperature
+            }
+            cellViewModel.backgroundColor.bind { color in
+                cell.contentView.backgroundColor = color
+            }
             return cell
         }
         self.dataSource = dataSource
     }
     
-    func applySnapshot() {
+    func applySnapshot(isReloadingData: Bool) {
         var snapshot = SnapshotType()
         snapshot.appendSections(LocationsListViewModel.Section.allCases)
         if let currentLocationCellViewModel = viewModel.currentLocationCellViewModel.value {
             snapshot.appendItems([currentLocationCellViewModel], toSection: .current)
         }
         snapshot.appendItems(viewModel.favoriteLocationsCellViewModels.value, toSection: .favorite)
-        dataSource.apply(snapshot)
+        if isReloadingData {
+            dataSource.applySnapshotUsingReloadData(snapshot)
+        } else {
+            dataSource.apply(snapshot,animatingDifferences: true)
+        }
     }
     
     func setupTableViewReordering() {
@@ -115,6 +140,4 @@ extension LocationsListViewController: SearchTableViewControllerDelegate {
         }
         
     }
-    
-    
 }

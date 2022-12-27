@@ -92,15 +92,7 @@ class LocationsListTableViewCell: UITableViewCell {
             hStack.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -20)
         ])
     }
-    
-    func configureCell(withViewModel viewModel: LocationsListCellViewModel) {
-        self.locationLabel.text = viewModel.location
-        self.conditionImageView.image = viewModel.image
-        self.conditionLabel.text = viewModel.condition
-        self.temperatureLabel.text = viewModel.temperature
-        self.contentView.backgroundColor = viewModel.backgroundColor
-    }
-    
+        
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super .init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()

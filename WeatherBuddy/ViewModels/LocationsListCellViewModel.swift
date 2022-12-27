@@ -9,26 +9,33 @@ import Foundation
 import UIKit.UIImage
 
 class LocationsListCellViewModel {
-    let briefCurrentWeather: BriefCurrentWeather
+    var briefCurrentWeather: BriefCurrentWeather? {
+        didSet {
+            configureViewModel()
+        }
+    }
     let locationName: String
     
-    var temperature = ""
-    var location = ""
-    var condition = ""
-    var image: UIImage? = nil
-    var backgroundColor: UIColor = .clear
+    var temperature = Box(value: "--")
+    var location = Box(value: " ")
+    var condition = Box(value: "--")
+    var image = Box<UIImage?>(value: nil)
+    var backgroundColor = Box(value: UIColor.cyan)
+    
     
     func configureViewModel() {
-        temperature = "\(Int(briefCurrentWeather.temperature))º"
-        location = locationName
-        condition = briefCurrentWeather.condition
-        image = UIImage(named: briefCurrentWeather.iconID)
-        backgroundColor = UIColor.weatherColor(forIconID: briefCurrentWeather.iconID)
+        location.value = locationName
+        if let briefCurrentWeather = briefCurrentWeather {
+            temperature.value = "\(Int(briefCurrentWeather.temperature))º"
+            condition.value = briefCurrentWeather.condition
+            image.value = UIImage(named: briefCurrentWeather.iconID)
+            backgroundColor.value = UIColor.weatherColor(forIconID: briefCurrentWeather.iconID)
+        }
     }
     
-    init(briefCurrentWeather: BriefCurrentWeather, locationName: String) {
-        self.briefCurrentWeather = briefCurrentWeather
+    init(locationName: String, briefCurrentWeather: BriefCurrentWeather? = nil) {
         self.locationName = locationName
+        self.briefCurrentWeather = briefCurrentWeather
         configureViewModel()
     }
 }

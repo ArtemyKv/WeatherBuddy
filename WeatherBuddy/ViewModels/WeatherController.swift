@@ -45,6 +45,11 @@ class WeatherController {
         do {
             let results = try coreDataStack.managedContext.fetch(fetchRequest)
             favoriteLocations = results
+            //refactor
+            for location in favoriteLocations {
+                locationsListViewModel.briefWeatherForFavoriteLocation.updateValue(nil, forKey: location)
+            }
+            locationsListViewModel.createInitialFavoriteCellViewModels()
         } catch let error as NSError {
             print("Unable to fetch \(error), \(error.userInfo)")
         }
@@ -69,7 +74,7 @@ class WeatherController {
             guard let self = self, let currentWeather = currentWeather else { return }
             self.detailWeatherViewModels[0].currentWeather = currentWeather
             let briefWeather = BriefCurrentWeather(temperature: currentWeather.parameters.temperature, condition: currentWeather.condition, iconID: currentWeather.conditionIconID)
-            self.locationsListViewModel.briefWeatherForeCurrentLocation = briefWeather
+            self.locationsListViewModel.briefWeatherForCurrentLocation = briefWeather
         }
         weatherFetchingService.fetchForecastWeatherData(for: currentLocation) { [weak self] forecastResponse, error in
             guard let self = self, let forecast = forecastResponse?.list else { return }
@@ -109,7 +114,7 @@ class WeatherController {
             }
         }
         group.notify(queue: .main) {
-            self.locationsListViewModel.createInitialFavoriteCellViewModels()
+            self.locationsListViewModel.updateFavoriteCellViewModels()
         }
     }
     
