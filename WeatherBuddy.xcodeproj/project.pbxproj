@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9C05B7D0295BCE24001E26FE /* LocationsListSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C05B7CF295BCE24001E26FE /* LocationsListSectionHeader.swift */; };
 		9C280F1D28D2DD5500A4EBC7 /* WeatherFetchingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C280F1C28D2DD5500A4EBC7 /* WeatherFetchingService.swift */; };
 		9C280F2128D4037900A4EBC7 /* GeocodingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C280F2028D4037900A4EBC7 /* GeocodingService.swift */; };
 		9C280F2328D4262200A4EBC7 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C280F2228D4262200A4EBC7 /* Weather.swift */; };
@@ -47,6 +48,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9C05B7CF295BCE24001E26FE /* LocationsListSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsListSectionHeader.swift; sourceTree = "<group>"; };
 		9C280F1C28D2DD5500A4EBC7 /* WeatherFetchingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherFetchingService.swift; sourceTree = "<group>"; };
 		9C280F2028D4037900A4EBC7 /* GeocodingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeocodingService.swift; sourceTree = "<group>"; };
 		9C280F2228D4262200A4EBC7 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				9CCE78E128DAA3520092FA18 /* HourlyWeatherCollectionViewCell.swift */,
 				9CCE78E728DC2D690092FA18 /* DailyWeatherCollectionViewCell.swift */,
 				9C34A59B28F503DB003FD3AA /* LocationsListTableViewCell.swift */,
+				9C05B7CF295BCE24001E26FE /* LocationsListSectionHeader.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 				9C280F2328D4262200A4EBC7 /* Weather.swift in Sources */,
 				9C34A55C28ED4796003FD3AA /* WeatherController.swift in Sources */,
 				9CC3E7CC28D652850033DD0F /* LocationWeatherViewController.swift in Sources */,
+				9C05B7D0295BCE24001E26FE /* LocationsListSectionHeader.swift in Sources */,
 				9CCE78E428DAC05A0092FA18 /* ForecastCellViewModel.swift in Sources */,
 				9C52443428D978A5001864A9 /* HourlyForecastCellViewModel.swift in Sources */,
 				9CC3E7D028D802A00033DD0F /* DetailWeatherViewModel.swift in Sources */,

@@ -88,11 +88,14 @@ class LocationsListViewController: UITableViewController {
     
     func applySnapshot(isReloadingData: Bool) {
         var snapshot = SnapshotType()
-        snapshot.appendSections(LocationsListViewModel.Section.allCases)
+        snapshot.appendSections([LocationsListViewModel.Section.current])
         if let currentLocationCellViewModel = viewModel.currentLocationCellViewModel.value {
             snapshot.appendItems([currentLocationCellViewModel], toSection: .current)
         }
-        snapshot.appendItems(viewModel.favoriteLocationsCellViewModels.value, toSection: .favorite)
+        if !viewModel.favoriteLocationsCellViewModels.value.isEmpty {
+            snapshot.appendSections([LocationsListViewModel.Section.favorite])
+            snapshot.appendItems(viewModel.favoriteLocationsCellViewModels.value, toSection: .favorite)
+        }
         if isReloadingData {
             dataSource.applySnapshotUsingReloadData(snapshot)
         } else {
@@ -120,6 +123,10 @@ class LocationsListViewController: UITableViewController {
         return 88
     }
     
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 32
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let pageVC = WeatherPagesViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
@@ -130,6 +137,19 @@ class LocationsListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
         return proposedDestinationIndexPath.section == 0 ? sourceIndexPath : proposedDestinationIndexPath
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = LocationsListSectionHeader()
+        if section == 0, viewModel.currentLocationCellViewModel.value != nil {
+            header.titleLabel.text = "Current Location"
+            return header
+        } else if section == 1 {
+            header.titleLabel.text = "Favorite Locations"
+            return header
+        } else {
+            return nil
+        }
     }
 }
 
