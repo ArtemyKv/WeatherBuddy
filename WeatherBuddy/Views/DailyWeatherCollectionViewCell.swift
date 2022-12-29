@@ -59,7 +59,7 @@ class DailyWeatherCollectionViewCell: UICollectionViewCell {
         self.contentView.addSubview(hStack)
         
         NSLayoutConstraint.activate([
-            minTempLabel.widthAnchor.constraint(equalToConstant: 30),
+            minTempLabel.widthAnchor.constraint(equalToConstant: 35),
             maxTempLabel.widthAnchor.constraint(equalTo: minTempLabel.widthAnchor),
             hStack.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             hStack.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),

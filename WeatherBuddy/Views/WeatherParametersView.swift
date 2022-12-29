@@ -65,6 +65,14 @@ class WeatherParametersView: UIView {
         return stack
     }()
     
+    private let backgroundView: UIVisualEffectView = {
+        let view = UIVisualEffectView()
+        view.effect = UIBlurEffect(style: .regular)
+        view.layer.cornerRadius = 20
+        view.clipsToBounds = true
+        return view
+    }()
+    
     private func parameterLabel() -> UILabel {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .regular)
@@ -108,13 +116,19 @@ class WeatherParametersView: UIView {
         }
         
         vStack.translatesAutoresizingMaskIntoConstraints = false
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(backgroundView)
         self.addSubview(vStack)
         
         NSLayoutConstraint.activate([
-            vStack.topAnchor.constraint(equalTo: self.topAnchor),
-            vStack.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            vStack.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            vStack.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+            backgroundView.topAnchor.constraint(equalTo: self.topAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            backgroundView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            vStack.leadingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.leadingAnchor, constant: 8),
+            vStack.trailingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.trailingAnchor, constant: -8),
+            vStack.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 20),
+            vStack.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -20),
         ])
     }
     

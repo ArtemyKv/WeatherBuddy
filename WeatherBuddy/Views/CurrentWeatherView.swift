@@ -54,6 +54,14 @@ class CurrentWeatherView: UIView {
         return imageView
     }()
     
+    let promptLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .ultraLight)
+        label.textAlignment = .center
+        label.text = "Tap to see details"
+        return label
+    }()
+    
     private let backgroundView: UIVisualEffectView = {
         let view = UIVisualEffectView()
         view.effect = UIBlurEffect(style: .regular)
@@ -107,15 +115,22 @@ class CurrentWeatherView: UIView {
         outerVStack.addArrangedSubview(areaLabel)
         outerVStack.addArrangedSubview(middleHStack)
         outerVStack.addArrangedSubview(dateLabel)
+        outerVStack.addArrangedSubview(promptLabel)
         
+        self.addSubview(backgroundView)
         self.addSubview(outerVStack)
         outerVStack.translatesAutoresizingMaskIntoConstraints = false
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            outerVStack.topAnchor.constraint(equalTo: self.topAnchor),
-            outerVStack.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            outerVStack.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            outerVStack.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+            backgroundView.topAnchor.constraint(equalTo: self.topAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            backgroundView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            outerVStack.leadingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.leadingAnchor, constant: 8),
+            outerVStack.trailingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.trailingAnchor, constant: -8),
+            outerVStack.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 20),
+            outerVStack.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -10),
         ])
     }
     

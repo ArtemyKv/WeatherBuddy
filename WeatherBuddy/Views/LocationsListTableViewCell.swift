@@ -85,7 +85,7 @@ class LocationsListTableViewCell: UITableViewCell {
         self.contentView.layer.cornerRadius = 20
         
         NSLayoutConstraint.activate([
-            temperatureLabel.widthAnchor.constraint(equalToConstant: 65),
+            temperatureLabel.widthAnchor.constraint(equalToConstant: 80),
             hStack.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 15),
             hStack.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -15),
             hStack.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),

@@ -20,17 +20,12 @@ class WeatherDetailView: UIView {
     let currentWeatherView = CurrentWeatherView()
     let weatherParametersView = WeatherParametersView()
     
-    private let backgroundView: UIVisualEffectView = {
-        let view = UIVisualEffectView()
-        view.effect = UIBlurEffect(style: .regular)
-        view.layer.cornerRadius = 20
-        view.clipsToBounds = true
-        return view
-    }()
+    private let containerView = UIView()
     
     let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: CGRect(), collectionViewLayout: UICollectionViewLayout())
         collectionView.backgroundColor = .clear
+        collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
     
@@ -39,48 +34,50 @@ class WeatherDetailView: UIView {
         backgroundColor = .systemOrange
         
         //Adding outer stack and collection view to superview
-        backgroundView.contentView.addSubview(currentWeatherView)
-        backgroundView.contentView.addSubview(weatherParametersView)
+        containerView.addSubview(currentWeatherView)
+        containerView.addSubview(weatherParametersView)
         
         currentWeatherIsVisible = true
         
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(flipViews))
-        backgroundView.addGestureRecognizer(tapRecognizer)
+        containerView.addGestureRecognizer(tapRecognizer)
         
-        self.addSubview(backgroundView)
+        self.addSubview(containerView)
         currentWeatherView.translatesAutoresizingMaskIntoConstraints = false
         weatherParametersView.translatesAutoresizingMaskIntoConstraints = false
-        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         
         self.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            currentWeatherView.leadingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.leadingAnchor, constant: 8),
-            currentWeatherView.trailingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.trailingAnchor, constant: -8),
-            currentWeatherView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 20),
-            currentWeatherView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -20),
-            weatherParametersView.leadingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.leadingAnchor, constant: 8),
-            weatherParametersView.trailingAnchor.constraint(equalTo: backgroundView.layoutMarginsGuide.trailingAnchor, constant: -8),
-            weatherParametersView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 20),
-            weatherParametersView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -20),
+            currentWeatherView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            currentWeatherView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            currentWeatherView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            currentWeatherView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            weatherParametersView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            weatherParametersView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            weatherParametersView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            weatherParametersView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
 
-            backgroundView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            backgroundView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            backgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 20),
-            collectionView.topAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: 32),
+            containerView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            containerView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            containerView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 20),
+            collectionView.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 32),
             collectionView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor,constant: -40),
-            collectionView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
         
     }
     
     @objc func flipViews() {
+        let transitionDirection: UIView.AnimationOptions = currentWeatherIsVisible ? .transitionFlipFromTop : .transitionFlipFromBottom
+        
         UIView.transition(from: currentWeatherIsVisible ? currentWeatherView : weatherParametersView,
                           to: currentWeatherIsVisible ? weatherParametersView : currentWeatherView,
                           duration: 0.5,
-                          options: [.transitionFlipFromLeft, .showHideTransitionViews])
+                          options: [transitionDirection, .showHideTransitionViews])
         
         currentWeatherIsVisible.toggle()
     }
