@@ -35,6 +35,7 @@
 		9C60030928F7A53C00EF95BA /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C60030828F7A53C00EF95BA /* SearchTableViewController.swift */; };
 		9C60030D28F908D800EF95BA /* SearchingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C60030C28F908D800EF95BA /* SearchingService.swift */; };
 		9C60031128FE2EAB00EF95BA /* LocationsListDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C60031028FE2EAB00EF95BA /* LocationsListDataSource.swift */; };
+		9CA55F60295D3CE100BD028D /* PushAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA55F5F295D3CE100BD028D /* PushAnimator.swift */; };
 		9CC3E7CA28D642440033DD0F /* WeatherDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC3E7C928D642440033DD0F /* WeatherDetailView.swift */; };
 		9CC3E7CC28D652850033DD0F /* LocationWeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC3E7CB28D652850033DD0F /* LocationWeatherViewController.swift */; };
 		9CC3E7CE28D7F6850033DD0F /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC3E7CD28D7F6850033DD0F /* LocationService.swift */; };
@@ -78,6 +79,7 @@
 		9C60030828F7A53C00EF95BA /* SearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
 		9C60030C28F908D800EF95BA /* SearchingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchingService.swift; sourceTree = "<group>"; };
 		9C60031028FE2EAB00EF95BA /* LocationsListDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsListDataSource.swift; sourceTree = "<group>"; };
+		9CA55F5F295D3CE100BD028D /* PushAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushAnimator.swift; sourceTree = "<group>"; };
 		9CC3E7C928D642440033DD0F /* WeatherDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDetailView.swift; sourceTree = "<group>"; };
 		9CC3E7CB28D652850033DD0F /* LocationWeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationWeatherViewController.swift; sourceTree = "<group>"; };
 		9CC3E7CD28D7F6850033DD0F /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 				9C34A55728EBCE17003FD3AA /* UIColorExtension.swift */,
 				9C34A56328EE8A21003FD3AA /* CoreDataStack.swift */,
 				9C60031028FE2EAB00EF95BA /* LocationsListDataSource.swift */,
+				9CA55F5F295D3CE100BD028D /* PushAnimator.swift */,
 			);
 			path = "Utilities and extensions";
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 				9CC3E7D228D803E20033DD0F /* Box.swift in Sources */,
 				9CCE78E228DAA3520092FA18 /* HourlyWeatherCollectionViewCell.swift in Sources */,
 				9C34A56228EE88DF003FD3AA /* WeatherBuddy.xcdatamodeld in Sources */,
+				9CA55F60295D3CE100BD028D /* PushAnimator.swift in Sources */,
 				9C280F2328D4262200A4EBC7 /* Weather.swift in Sources */,
 				9C34A55C28ED4796003FD3AA /* WeatherController.swift in Sources */,
 				9CC3E7CC28D652850033DD0F /* LocationWeatherViewController.swift in Sources */,

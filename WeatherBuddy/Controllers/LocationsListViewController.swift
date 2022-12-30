@@ -15,9 +15,12 @@ class LocationsListViewController: UITableViewController {
     var viewModel: LocationsListViewModel!
     var dataSource: LocationsListDataSource!
     
+    let transition = PushAnimator()
+    var selectedCellFrame: CGRect = .zero
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.delegate = self
         setupDataSource()
         setupTableViewReordering()
         setupRowDeletion()
@@ -128,11 +131,16 @@ class LocationsListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let selectedCell = tableView.cellForRow(at: indexPath) as? LocationsListTableViewCell else { return }
+        selectedCellFrame = selectedCell.frame
         tableView.deselectRow(at: indexPath, animated: true)
         let pageVC = WeatherPagesViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
         pageVC.initialPage = (indexPath.section != 0 ? (indexPath.row + 1) : 0)
         pageVC.detailWeatherViewModels = weatherController.detailWeatherViewModels
-        self.navigationController?.pushViewController(pageVC, animated: true)
+        
+        selectedCell.animateSelection(completion: {
+            self.navigationController?.pushViewController(pageVC, animated: true)
+        })
     }
     
     override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
@@ -159,5 +167,13 @@ extension LocationsListViewController: SearchTableViewControllerDelegate {
             self?.tableView.reloadData()
         }
         
+    }
+}
+
+extension LocationsListViewController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transition.operation = operation
+        transition.originFrame = selectedCellFrame
+        return transition
     }
 }

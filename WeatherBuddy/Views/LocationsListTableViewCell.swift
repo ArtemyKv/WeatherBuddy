@@ -11,13 +11,6 @@ class LocationsListTableViewCell: UITableViewCell {
     
     static let reuseIdentifier = "LocationsListTableViewCell"
     
-    let backView: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 20
-        view.backgroundColor = .lightGray
-        return view
-    }()
-    
     let locationLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20, weight: .medium)
@@ -91,6 +84,22 @@ class LocationsListTableViewCell: UITableViewCell {
             hStack.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
             hStack.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -20)
         ])
+    }
+    
+    func animateSelection(completion: @escaping () -> Void) {        
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0.0,
+            options: [.curveEaseIn],
+            animations: {
+                self.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+            },
+            completion: { _ in
+                UIView.animate(withDuration: 0.3) {
+                    self.transform = .identity
+                }
+                completion()
+            })
     }
         
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
