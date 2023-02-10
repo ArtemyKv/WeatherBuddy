@@ -9,8 +9,9 @@ Weather Buddy is a weather app powered by OpenWeatherMap
  - User can add to list different locations and track weather in them
  
  ## Screenshots
- There will be some screenshots later
-![Simulator Screen Shot - iPhone 14 Pro - 2023-02-10 at 10 06 57@0 25x](https://user-images.githubusercontent.com/90643294/218009850-df2a1213-16e4-49e0-a402-5e9a422b9144.png)
+| Locations | Search | Weather Details |
+:---:|:---:|:---:
+![Simulator Screen Shot - iPhone 14 Pro - 2023-02-10 at 22 37 20](https://user-images.githubusercontent.com/90643294/218159027-b9c41b3d-7fe8-4693-8816-1bbdb06d96ba.png) | ![Simulator Screen Shot - iPhone 14 Pro - 2023-02-10 at 22 40 42](https://user-images.githubusercontent.com/90643294/218159427-aa01ead1-3bee-440f-92fd-c077b15f6c31.png) | ![Simulator Screen Shot - iPhone 14 Pro - 2023-02-10 at 22 41 41](https://user-images.githubusercontent.com/90643294/218159633-39562c59-816f-4d8a-b6e2-3474b1148e57.png)
 
 
  ## Technologies stack
