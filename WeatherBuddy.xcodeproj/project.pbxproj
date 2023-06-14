@@ -47,6 +47,7 @@
 		9CCE78E628DC0DCB0092FA18 /* DailyForecastWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CCE78E528DC0DCB0092FA18 /* DailyForecastWeather.swift */; };
 		9CCE78E828DC2D690092FA18 /* DailyWeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CCE78E728DC2D690092FA18 /* DailyWeatherCollectionViewCell.swift */; };
 		B66294AA2A3943C100D0624D /* LocationsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294A92A3943C100D0624D /* LocationsListView.swift */; };
+		B66294AC2A394A3100D0624D /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294AB2A394A3100D0624D /* MainCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -92,6 +93,7 @@
 		9CCE78E528DC0DCB0092FA18 /* DailyForecastWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyForecastWeather.swift; sourceTree = "<group>"; };
 		9CCE78E728DC2D690092FA18 /* DailyWeatherCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyWeatherCollectionViewCell.swift; sourceTree = "<group>"; };
 		B66294A92A3943C100D0624D /* LocationsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsListView.swift; sourceTree = "<group>"; };
+		B66294AB2A394A3100D0624D /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +167,7 @@
 				9C2E8E5128D15ADB00FFFB69 /* LaunchScreen.storyboard */,
 				9C2E8E4628D15ADA00FFFB69 /* AppDelegate.swift */,
 				9C2E8E4828D15ADA00FFFB69 /* SceneDelegate.swift */,
+				B66294AB2A394A3100D0624D /* MainCoordinator.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -377,6 +380,7 @@
 				9C34A56E28EE90E1003FD3AA /* Location+CoreDataProperties.swift in Sources */,
 				9C60031128FE2EAB00EF95BA /* LocationsListDataSource.swift in Sources */,
 				9CCE78E628DC0DCB0092FA18 /* DailyForecastWeather.swift in Sources */,
+				B66294AC2A394A3100D0624D /* MainCoordinator.swift in Sources */,
 				9C34A59C28F503DB003FD3AA /* LocationsListTableViewCell.swift in Sources */,
 				9CCE78E828DC2D690092FA18 /* DailyWeatherCollectionViewCell.swift in Sources */,
 				9C34A59A28F48F2D003FD3AA /* LocationsListViewController.swift in Sources */,
