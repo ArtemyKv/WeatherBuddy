@@ -49,6 +49,7 @@
 		B66294AA2A3943C100D0624D /* LocationsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294A92A3943C100D0624D /* LocationsListView.swift */; };
 		B66294AC2A394A3100D0624D /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294AB2A394A3100D0624D /* MainCoordinator.swift */; };
 		B66294AE2A394A8300D0624D /* MainBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294AD2A394A8300D0624D /* MainBuilder.swift */; };
+		B66294B12A3A223400D0624D /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294B02A3A223400D0624D /* SearchViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -96,6 +97,7 @@
 		B66294A92A3943C100D0624D /* LocationsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsListView.swift; sourceTree = "<group>"; };
 		B66294AB2A394A3100D0624D /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 		B66294AD2A394A8300D0624D /* MainBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainBuilder.swift; sourceTree = "<group>"; };
+		B66294B02A3A223400D0624D /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -290,6 +292,7 @@
 		B66294A72A38ADC400D0624D /* SearchScreen */ = {
 			isa = PBXGroup;
 			children = (
+				B66294AF2A3A222800D0624D /* ViewModel */,
 				B66294A82A38ADDA00D0624D /* View */,
 			);
 			path = SearchScreen;
@@ -301,6 +304,14 @@
 				9C60030828F7A53C00EF95BA /* SearchTableViewController.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		B66294AF2A3A222800D0624D /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				B66294B02A3A223400D0624D /* SearchViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -384,6 +395,7 @@
 				9C60031128FE2EAB00EF95BA /* LocationsListDataSource.swift in Sources */,
 				9CCE78E628DC0DCB0092FA18 /* DailyForecastWeather.swift in Sources */,
 				B66294AC2A394A3100D0624D /* MainCoordinator.swift in Sources */,
+				B66294B12A3A223400D0624D /* SearchViewModel.swift in Sources */,
 				9C34A59C28F503DB003FD3AA /* LocationsListTableViewCell.swift in Sources */,
 				9CCE78E828DC2D690092FA18 /* DailyWeatherCollectionViewCell.swift in Sources */,
 				9C34A59A28F48F2D003FD3AA /* LocationsListViewController.swift in Sources */,
