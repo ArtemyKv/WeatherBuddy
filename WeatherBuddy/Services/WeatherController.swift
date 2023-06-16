@@ -1,5 +1,5 @@
 //
-//  LocationPagesViewModel.swift
+//  WeatherController.swift
 //  WeatherBuddy
 //
 //  Created by Artem Kvashnin on 05.10.2022.
@@ -9,6 +9,11 @@ import Foundation
 import CoreData
 
 class WeatherController {
+    //MARK: - Static properties (notification names)
+    static let didSetLocationsNotification = Notification.Name("WeatherController.didSetLocations")
+    static let didSetWeatherForCurrentLocationNotification = Notification.Name("WeatherController.didSetWeatherForCurrentLocation")
+    static let didSetWeatherForFavoriteLocationsNotification = Notification.Name("WeatherController.didSetWeatherForFavoriteLocations")
+    
     //MARK: - Service properties
     lazy var coreDataStack = CoreDataStack(modelName: "WeatherBuddy")
     private lazy var geocodingService: GeocodingService = {
@@ -18,24 +23,23 @@ class WeatherController {
     }()
     private let locationService = LocationService()
     private let weatherFetchingService = WeatherFetchingService()
-    
+        
     //MARK: - Location properties
-    var favoriteLocations: [Location] = []
-    var currentLocation: Location? {
-        didSet {
-            locationsListViewModel.currentLocation = currentLocation
-        }
-    }
+    private var favoriteLocations: [Location] = []
+    private var _currentLocation: Location?
     
-    //MARK: - View Models
-    var detailWeatherViewModels: [DetailWeatherViewModel] = []
-    var locationsListViewModel = LocationsListViewModel()
+    //MARK: - Fetched Weather
+    var currentLocationWeather: Weather?
+    var currentLocationForecast: [Weather] = []
+    
+    var weatherByLocation: [Location: Weather] = [:]
+    var forecastByLocation: [Location: [Weather]] = [:]
     
     //MARK: - Init
     init() {
         locationService.delegate = self
     }
-    
+        
     //MARK: - Locations fetching method
     private func fetchFavoriteLocations() {
         let fetchRequest = Location.fetchRequest()
@@ -45,57 +49,46 @@ class WeatherController {
         do {
             let results = try coreDataStack.managedContext.fetch(fetchRequest)
             favoriteLocations = results
-            //refactor
-            for location in favoriteLocations {
-                locationsListViewModel.briefWeatherForFavoriteLocation.updateValue(nil, forKey: location)
-            }
-            locationsListViewModel.createInitialFavoriteCellViewModels()
+            NotificationCenter.default.post(name: WeatherController.didSetLocationsNotification, object: nil)
         } catch let error as NSError {
             print("Unable to fetch \(error), \(error.userInfo)")
         }
     }
     
-    private func createDetailWeatherViewModels() {
-        guard let currentLocation = currentLocation else { return }
-        let currentLocationDetailWeatherViewModel = DetailWeatherViewModel(location: currentLocation)
-        detailWeatherViewModels = [currentLocationDetailWeatherViewModel]
-        
-        guard !favoriteLocations.isEmpty else { return }
-        for location in favoriteLocations {
-            let detailWeatherViewModel = DetailWeatherViewModel(location: location)
-            detailWeatherViewModels.append(detailWeatherViewModel)
-        }
-    }
-    
     //MARK: - Weather Fethcing methods
     private func fetchWeatherForCurrentLocation() {
-        guard let currentLocation = currentLocation else { return }
+        guard let currentLocation = _currentLocation else { return }
+        let group = DispatchGroup()
+        group.enter()
         weatherFetchingService.fetchCurrentWeatherData(for: currentLocation) { [weak self] currentWeather, error in
             guard let self = self, let currentWeather = currentWeather else { return }
-            self.detailWeatherViewModels[0].currentWeather = currentWeather
-            let briefWeather = BriefCurrentWeather(temperature: currentWeather.parameters.temperature, condition: currentWeather.condition, iconID: currentWeather.conditionIconID)
-            self.locationsListViewModel.briefWeatherForCurrentLocation = briefWeather
+            self.currentLocationWeather = currentWeather
+            group.leave()
         }
+        group.enter()
         weatherFetchingService.fetchForecastWeatherData(for: currentLocation) { [weak self] forecastResponse, error in
             guard let self = self, let forecast = forecastResponse?.list else { return }
-            self.detailWeatherViewModels[0].forecast = forecast
+            self.currentLocationForecast = forecast
+            group.leave()
+        }
+        
+        group.notify(queue: .main) {
+            NotificationCenter.default.post(name: WeatherController.didSetWeatherForCurrentLocationNotification, object: nil)
         }
     }
     
-    func fetchWeatherForFavoriteLocation(location: Location, detailViewModelIndex: Int, completion: @escaping () -> ()) {
+    func fetchWeatherForFavoriteLocation(location: Location, completion: @escaping () -> ()) {
         let group = DispatchGroup()
         group.enter()
         weatherFetchingService.fetchCurrentWeatherData(for: location) { [weak self] currentWeather, error in
             guard let self = self, let currentWeather = currentWeather else { return }
-            self.detailWeatherViewModels[detailViewModelIndex].currentWeather = currentWeather
-            let briefWeather = BriefCurrentWeather(temperature: currentWeather.parameters.temperature, condition: currentWeather.condition, iconID: currentWeather.conditionIconID)
-            self.locationsListViewModel.briefWeatherForFavoriteLocation[location] = briefWeather
+            self.weatherByLocation[location] = currentWeather
             group.leave()
         }
         group.enter()
         weatherFetchingService.fetchForecastWeatherData(for: location) { [weak self] forecastResponse, error in
             guard let self = self, let forecast = forecastResponse?.list else { return }
-            self.detailWeatherViewModels[detailViewModelIndex].forecast = forecast
+            self.forecastByLocation[location] = forecast
             group.leave()
         }
         
@@ -106,48 +99,54 @@ class WeatherController {
     
     private func fetchWeatherForFavoriteLocations() {
         let group = DispatchGroup()
-        for (i, location) in favoriteLocations.enumerated() {
+        for location in favoriteLocations {
             group.enter()
-            let viewModelIndex = i + 1
-            fetchWeatherForFavoriteLocation(location: location, detailViewModelIndex: viewModelIndex) {
+            fetchWeatherForFavoriteLocation(location: location) {
                 group.leave()
             }
         }
         group.notify(queue: .main) {
-            self.locationsListViewModel.updateFavoriteCellViewModels()
+            NotificationCenter.default.post(name: WeatherController.didSetWeatherForFavoriteLocationsNotification, object: nil)
         }
     }
     
-    func addLocationToFavorites(withAddressString addressString: String, completion: @escaping () ->()) {
+    //MARK: - Manage locations
+    
+    func currentLocation() -> Location? {
+        return _currentLocation
+    }
+    
+    func favoriteLocationsCount() -> Int {
+        return favoriteLocations.count
+    }
+    
+    func favoriteLocation(at index: Int) -> Location? {
+        guard index < favoriteLocationsCount() else { return nil }
+        return favoriteLocations[index]
+    }
+    
+    func addLocationToFavorites(withAddressString addressString: String, completion: @escaping (Location) ->()) {
         geocodingService.getLocation(from: addressString) { [weak self] location in
             guard let self = self else { return }
             location.order = Int32(self.favoriteLocations.count)
             self.coreDataStack.saveContext()
             self.favoriteLocations.append(location)
-            let weatherViewModel = DetailWeatherViewModel(location: location)
-            self.detailWeatherViewModels.append(weatherViewModel)
-            
-            let viewModelIndex = self.detailWeatherViewModels.count - 1
-            self.fetchWeatherForFavoriteLocation(location: location, detailViewModelIndex: viewModelIndex) {
-                self.locationsListViewModel.createCellViewModelForNewLocation(location: location)
-                completion()
+
+            self.fetchWeatherForFavoriteLocation(location: location) {
+                completion(location)
             }
         }
     }
     
-    func handleReorderingFavoriteLocations(at sourceIndex: Int, to destinationIndex: Int) {
+    func moveFavoriteLocation(from sourceIndex: Int, to destinationIndex: Int) {
         let location = self.favoriteLocations.remove(at: sourceIndex)
         self.favoriteLocations.insert(location, at: destinationIndex)
-        let viewModel = self.detailWeatherViewModels.remove(at: sourceIndex + 1)
-        self.detailWeatherViewModels.insert(viewModel, at: destinationIndex + 1)
         updateLocationsOrder()
         coreDataStack.saveContext()
     }
     
-    func handleLocationDeletion( at index: Int) {
+    func removeLocationFromFavorites( at index: Int) {
         let location = favoriteLocations.remove(at: index)
-        detailWeatherViewModels.remove(at: index + 1)
-        locationsListViewModel.briefWeatherForFavoriteLocation.removeValue(forKey: location)
         coreDataStack.managedContext.delete(location)
         updateLocationsOrder()
         coreDataStack.saveContext()
@@ -158,15 +157,23 @@ class WeatherController {
             location.order = Int32(i)
         }
     }
+    
+    //MARK: - Make briefWeather
+    
+    func briefWeather(forLocation location: Location, isCurrentLocation: Bool) -> BriefCurrentWeather? {
+        guard let currentWeather = isCurrentLocation ? currentLocationWeather : weatherByLocation[location]
+        else { return nil }
+        let briefWeather = BriefCurrentWeather(temperature: currentWeather.parameters.temperature, condition: currentWeather.condition, iconID: currentWeather.conditionIconID)
+        return briefWeather
+    }
 }
 
 extension WeatherController: LocationServiceDelegate {
     func updateLocationWith(latitude: Double, longitude: Double) {
         geocodingService.getLocationFrom(latitude: latitude, longitude: longitude) { [weak self] location in
             guard let self = self else { return }
-            self.currentLocation = location
+            self._currentLocation = location
             self.fetchFavoriteLocations()
-            self.createDetailWeatherViewModels()
             self.fetchWeatherForCurrentLocation()
             self.fetchWeatherForFavoriteLocations()
         }

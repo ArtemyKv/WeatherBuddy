@@ -9,22 +9,8 @@ import Foundation
 
 class LocationsListViewModel {
     
-    var briefWeatherForFavoriteLocation: [Location: BriefCurrentWeather?] = [:]
-    var currentLocation: Location? {
-        didSet {
-            createCurrentCellViewModel()
-        }
-    }
-    
-    var briefWeatherForCurrentLocation: BriefCurrentWeather? {
-        didSet {
-            currentLocationCellViewModel.value?.briefCurrentWeather = briefWeatherForCurrentLocation
-        }
-    }
-    
-    var sortedLocations: [Location] {
-        briefWeatherForFavoriteLocation.keys.sorted(by: { $0.order < $1.order })
-    }
+    var weatherController: WeatherController!
+    var coordinator: Coordinator!
     
     var favoriteLocationsCellViewModels: Box<[LocationsListCellViewModel]> = Box(value: [])
     var currentLocationCellViewModel: Box<LocationsListCellViewModel?> = Box(value: nil)
@@ -33,33 +19,79 @@ class LocationsListViewModel {
         case current
         case favorite
     }
+    
+    init() {
+        setupNotificationObservers()
+    }
+    
+    private func setupNotificationObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(makeCellViewModels),
+            name: WeatherController.didSetLocationsNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateCurrentCellViewModel),
+            name: WeatherController.didSetWeatherForCurrentLocationNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateFavoriteCellViewModels),
+            name: WeatherController.didSetWeatherForFavoriteLocationsNotification,
+            object: nil
+        )
+    }
+    
+    @objc private func makeCellViewModels() {
+        makeCurrentCellViewModel()
+        makeFavoriteCellViewModels()
+    }
  
-    func createCurrentCellViewModel() {
-        guard let location = currentLocation else { return }
+    private func makeCurrentCellViewModel() {
+        guard let location = weatherController.currentLocation() else { return }
         currentLocationCellViewModel.value = cellViewModel(forLocation: location, isCurrentLocation: true)
     }
     
-    func createInitialFavoriteCellViewModels() {
-        for location in sortedLocations {
+    private func makeFavoriteCellViewModels() {
+        for i in 0..<weatherController.favoriteLocationsCount() {
+            let location = weatherController.favoriteLocation(at: i)!
             let cellViewModel = cellViewModel(forLocation: location, isCurrentLocation: false)
             favoriteLocationsCellViewModels.value.append(cellViewModel)
         }
     }
     
-    func updateFavoriteCellViewModels() {
-        for (i, location) in sortedLocations.enumerated() {
-            guard let briefWeather = briefWeatherForFavoriteLocation[location] else { continue }
-            favoriteLocationsCellViewModels.value[i].briefCurrentWeather = briefWeather
+    @objc private func updateCurrentCellViewModel() {
+        guard let location = weatherController.currentLocation(),
+              let cellViewModel = currentLocationCellViewModel.value else { return }
+        updateCellViewModel(cellViewModel, forLocation: location, isCurrentLocation: true)
+    }
+    
+    @objc private func updateFavoriteCellViewModels() {
+        for i in 0..<weatherController.favoriteLocationsCount() {
+            let location = weatherController.favoriteLocation(at: i)!
+            let cellViewModel = favoriteLocationsCellViewModels.value[i]
+            updateCellViewModel(cellViewModel, forLocation: location, isCurrentLocation: false)
         }
     }
     
-    func createCellViewModelForNewLocation(location: Location) {
+    private func updateCellViewModel(_ cellViewModel: LocationsListCellViewModel, forLocation location: Location, isCurrentLocation: Bool) {
+        let briefWeather = weatherController.briefWeather(forLocation: location, isCurrentLocation: isCurrentLocation)
+        cellViewModel.briefCurrentWeather = briefWeather
+    }
+    
+    func makeCellViewModelForNewLocation(location: Location) {
         let cellViewModel = cellViewModel(forLocation: location, isCurrentLocation: false)
         favoriteLocationsCellViewModels.value.append(cellViewModel)
+        updateCellViewModel(cellViewModel, forLocation: location, isCurrentLocation: false)
     }
     
     func cellViewModel(forLocation location: Location, isCurrentLocation: Bool) -> LocationsListCellViewModel {
-        let briefWeather = isCurrentLocation ? briefWeatherForCurrentLocation : briefWeatherForFavoriteLocation[location]!
+        let briefWeather = weatherController.briefWeather(forLocation: location, isCurrentLocation: isCurrentLocation)
         let locationName = location.name ?? location.administrativeArea ?? "No location name"
         let cellViewModel = LocationsListCellViewModel(locationName: locationName, briefCurrentWeather: briefWeather)
         return cellViewModel
@@ -67,11 +99,31 @@ class LocationsListViewModel {
     
     func moveCell(at sourceIndex: Int, to destinationIndex: Int) {
         let movedCellViewModel = self.favoriteLocationsCellViewModels.value.remove(at: sourceIndex)
-        self.favoriteLocationsCellViewModels.value.insert(movedCellViewModel, at: destinationIndex)
+        favoriteLocationsCellViewModels.value.insert(movedCellViewModel, at: destinationIndex)
+        weatherController.moveFavoriteLocation(from: sourceIndex, to: destinationIndex)
     }
     
     func deleteCell( at index: Int) {
-        self.favoriteLocationsCellViewModels.value.remove(at: index)
+        favoriteLocationsCellViewModels.value.remove(at: index)
+        weatherController.removeLocationFromFavorites(at: index)
         
+    }
+    
+    func addButtonTapped() {
+        coordinator.presentSearchScreen(searchScreenDelegate: self)
+    }
+    
+    func rowSelected(at indexPath: IndexPath) {
+        let startPage = indexPath.section == 0 ? 0 : (indexPath.row + 1)
+        coordinator.presentWeatherPagesScreen(startPage: startPage)
+        
+    }
+}
+
+extension LocationsListViewModel: SearchViewModelDelegate {
+    func addLocation(withSearchResult searchResult: SearchingService.SearchResult) {
+        weatherController.addLocationToFavorites(withAddressString: searchResult.title) { [weak self] location in
+            self?.makeCellViewModelForNewLocation(location: location)
+        }
     }
 }

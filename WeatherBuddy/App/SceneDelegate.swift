@@ -10,6 +10,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    var coordinator: Coordinator?
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -17,11 +18,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        let rootVC = LocationsListViewController(style: .grouped)
-        let navigationVC = UINavigationController(rootViewController: rootVC)
-        self.window = window
-        window.rootViewController = navigationVC
+        let navigationController = UINavigationController()
+        let weatherController = WeatherController()
+        let builder = MainBuilder(weatherController: weatherController)
+        let coordinator = MainCoordinator(builder: builder, navigationController: navigationController)
+        coordinator.start()
+        
+        window.rootViewController = navigationController
         window.makeKeyAndVisible()
+        
+        self.window = window
+        self.coordinator = coordinator
+        
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
