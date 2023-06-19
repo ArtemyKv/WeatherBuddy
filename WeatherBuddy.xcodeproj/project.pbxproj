@@ -51,6 +51,7 @@
 		B66294AE2A394A8300D0624D /* MainBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294AD2A394A8300D0624D /* MainBuilder.swift */; };
 		B66294B12A3A223400D0624D /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294B02A3A223400D0624D /* SearchViewModel.swift */; };
 		B66294B32A3BE8D000D0624D /* PagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294B22A3BE8D000D0624D /* PagesViewModel.swift */; };
+		B66294B52A3FF94800D0624D /* CurrentWeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294B42A3FF94800D0624D /* CurrentWeatherViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -100,6 +101,7 @@
 		B66294AD2A394A8300D0624D /* MainBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainBuilder.swift; sourceTree = "<group>"; };
 		B66294B02A3A223400D0624D /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		B66294B22A3BE8D000D0624D /* PagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagesViewModel.swift; sourceTree = "<group>"; };
+		B66294B42A3FF94800D0624D /* CurrentWeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -267,6 +269,7 @@
 			children = (
 				B66294B22A3BE8D000D0624D /* PagesViewModel.swift */,
 				9CC3E7CF28D802A00033DD0F /* DetailWeatherViewModel.swift */,
+				B66294B42A3FF94800D0624D /* CurrentWeatherViewModel.swift */,
 				9CCE78E328DAC05A0092FA18 /* ForecastCellViewModel.swift */,
 				9C52443528D978B7001864A9 /* DailyForecastCellViewModel.swift */,
 				9C52443328D978A5001864A9 /* HourlyForecastCellViewModel.swift */,
@@ -427,6 +430,7 @@
 				B66294AA2A3943C100D0624D /* LocationsListView.swift in Sources */,
 				9CCE78E028DA9CB50092FA18 /* SectionBackgroundDecorationView.swift in Sources */,
 				9C34A55828EBCE17003FD3AA /* UIColorExtension.swift in Sources */,
+				B66294B52A3FF94800D0624D /* CurrentWeatherViewModel.swift in Sources */,
 				9C2E8E4928D15ADA00FFFB69 /* SceneDelegate.swift in Sources */,
 				9C34A55628EA6D45003FD3AA /* WeatherParametersView.swift in Sources */,
 			);
