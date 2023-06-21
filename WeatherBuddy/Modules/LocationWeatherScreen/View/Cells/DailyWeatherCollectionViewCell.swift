@@ -57,15 +57,22 @@ class DailyWeatherCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupView() {
+       addSubviews()
+        setupConstraints()
+    }
+    
+    private func addSubviews() {
         hStack.addArrangedSubview(weekdayLabel)
         hStack.addArrangedSubview(imageView)
         hStack.addArrangedSubview(minTempLabel)
         hStack.addArrangedSubview(maxTempLabel)
-        
+        contentView.addSubview(hStack)
+    }
+    
+    private func setupConstraints() {
         minTempLabel.translatesAutoresizingMaskIntoConstraints = false
         maxTempLabel.translatesAutoresizingMaskIntoConstraints = false
         hStack.translatesAutoresizingMaskIntoConstraints = false
-        self.contentView.addSubview(hStack)
         
         NSLayoutConstraint.activate([
             minTempLabel.widthAnchor.constraint(equalToConstant: 35),

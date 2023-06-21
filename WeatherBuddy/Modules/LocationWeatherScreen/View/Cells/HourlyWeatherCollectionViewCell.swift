@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HourlyWeatherCollectionViewCell: UICollectionViewCell {
+final class HourlyWeatherCollectionViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "HourlyWeatherCollectionViewCell"
     
@@ -54,8 +54,8 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
         vStack.addArrangedSubview(hourLabel)
         vStack.addArrangedSubview(imageView)
         vStack.addArrangedSubview(temperatureLabel)
+        contentView.addSubview(vStack)
         
-        self.contentView.addSubview(vStack)
         vStack.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([

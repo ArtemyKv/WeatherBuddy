@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class SectionBackgroundDecorationView: UICollectionReusableView {
+final class SectionBackgroundDecorationView: UICollectionReusableView {
     
     let blurView: UIVisualEffectView = {
         let view = UIVisualEffectView()
@@ -18,7 +18,7 @@ class SectionBackgroundDecorationView: UICollectionReusableView {
         return view
     }()
     
-    func setupView() {
+    private func setupView() {
         addSubview(blurView)
         blurView.translatesAutoresizingMaskIntoConstraints = false
         

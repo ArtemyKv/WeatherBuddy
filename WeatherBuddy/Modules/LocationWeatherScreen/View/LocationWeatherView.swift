@@ -8,17 +8,17 @@
 import Foundation
 import UIKit
 
-class LocationWeatherView: UIView {
+final class LocationWeatherView: UIView {
     
-    var currentWeatherIsVisible: Bool = true {
+    private var currentWeatherIsVisible: Bool = true {
         didSet {
             currentWeatherView.isHidden = !currentWeatherIsVisible
             weatherParametersView.isHidden = currentWeatherIsVisible
         }
     }
     
-    let currentWeatherView = CurrentLocationWeatherView()
-    let weatherParametersView = LocationWeatherParametersView()
+    private let currentWeatherView = CurrentLocationWeatherView()
+    private let weatherParametersView = LocationWeatherParametersView()
     
     private let containerView = UIView()
     

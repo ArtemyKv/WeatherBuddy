@@ -8,7 +8,7 @@
 import Foundation
 import UIKit.UIImage
 
-class DailyForecastCellViewModel: ForecastCellViewModel {
+final class DailyForecastCellViewModel: ForecastCellViewModel {
     
     private var dailyForecastWeather: DailyForecastWeather {
         didSet {
@@ -20,6 +20,11 @@ class DailyForecastCellViewModel: ForecastCellViewModel {
     var maxTemperature: String = ""
     var weekDayString: String = ""
     var weatherIcon: UIImage? = nil
+    
+    init(dailyForecastWeather: DailyForecastWeather) {
+        self.dailyForecastWeather = dailyForecastWeather
+        configure()
+    }
     
     private func configure() {
         let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -38,11 +43,6 @@ class DailyForecastCellViewModel: ForecastCellViewModel {
         }
         let maxCountIcon = iconsCountDict.max { $0.value < $1.value }
         return "\(maxCountIcon!.key)d"
-    }
-    
-    init(dailyForecastWeather: DailyForecastWeather) {
-        self.dailyForecastWeather = dailyForecastWeather
-        configure()
     }
 }
 

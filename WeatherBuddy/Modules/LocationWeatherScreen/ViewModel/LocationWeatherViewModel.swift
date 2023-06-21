@@ -8,9 +8,9 @@
 import Foundation
 import UIKit.UIImage
 
-class LocationWeatherViewModel {
+final class LocationWeatherViewModel {
     //MARK: - Model properties
-    var location: Location
+    private var location: Location
     
     var currentWeather: Weather? {
         didSet {
@@ -44,6 +44,11 @@ class LocationWeatherViewModel {
     enum Item: Hashable {
         case hourly(HourlyForecastCellViewModel)
         case daily(DailyForecastCellViewModel)
+    }
+    
+    //MARK: - Init
+    init(location: Location) {
+        self.location = location
     }
     
     //MARK: - Methods
@@ -114,7 +119,7 @@ class LocationWeatherViewModel {
     
     private func setupDailyForecastViewModel(with forecast: [Weather]) {
         forecastCellViewModelsBySection.value[.daily] = []
-        var dailyForecastByDayNumber = dailyForecastByDayNumber(forecast: forecast)
+        let dailyForecastByDayNumber = dailyForecastByDayNumber(forecast: forecast)
         for key in dailyForecastByDayNumber.keys.sorted(by: <) {
             self.forecastCellViewModelsBySection.value[.daily]?.append(DailyForecastCellViewModel(dailyForecastWeather: dailyForecastByDayNumber[key]!))
         }
@@ -144,10 +149,6 @@ class LocationWeatherViewModel {
             dailyForecastByDayNumber[dayNumber]?.icons.append(item.conditionIconID)
         }
         return dailyForecastByDayNumber
-    }
-    
-    init(location: Location) {
-        self.location = location
     }
 }
 

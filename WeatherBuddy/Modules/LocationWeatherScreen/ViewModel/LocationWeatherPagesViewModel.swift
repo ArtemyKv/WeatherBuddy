@@ -7,10 +7,10 @@
 
 import Foundation
 
-class LocationWeatherPagesViewModel {
+final class LocationWeatherPagesViewModel {
     
-    let coordinator: Coordinator
-    let weatherController: WeatherController
+    private let coordinator: Coordinator
+    private let weatherController: WeatherController
     
     private(set) var currentDetailViewModel: LocationWeatherViewModel?
     private(set) var favoritesDetailWeatherViewModels: [LocationWeatherViewModel] = []
@@ -22,14 +22,12 @@ class LocationWeatherPagesViewModel {
     }
     
     private func setupNotificationObservers() {
-        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateCurrentLocationDetailViewModel),
             name: WeatherController.didSetWeatherForCurrentLocationNotification,
             object: nil
         )
-        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateFavoriteLocationsDetailViewModels),

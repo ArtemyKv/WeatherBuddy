@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class LocationWeatherParametersView: UIView {
+final class LocationWeatherParametersView: UIView {
     
    private enum Title: String, CaseIterable {
         case feelsLike = "Feels Like"
@@ -99,6 +99,12 @@ class LocationWeatherParametersView: UIView {
     }
     
     private func setupView() {
+        setupVStack()
+        addSubviews()
+        setupConstraints()
+    }
+    
+    private func setupVStack() {
         let parameterLabels = [feelsLikeLabel, pressureLabel, humidityLabel, visibilityLabel, windSpeedLabel, windDirectionLabel]
         
         firstRowHStack.addArrangedSubview(cityLabel)
@@ -123,11 +129,16 @@ class LocationWeatherParametersView: UIView {
             hStack.addArrangedSubview(parameterLabel)
             vStack.addArrangedSubview(hStack)
         }
-        
+    }
+    
+    private func addSubviews() {
+        addSubview(backgroundView)
+        addSubview(vStack)
+    }
+    
+    private func setupConstraints() {
         vStack.translatesAutoresizingMaskIntoConstraints = false
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(backgroundView)
-        self.addSubview(vStack)
         
         NSLayoutConstraint.activate([
             backgroundView.topAnchor.constraint(equalTo: self.topAnchor),

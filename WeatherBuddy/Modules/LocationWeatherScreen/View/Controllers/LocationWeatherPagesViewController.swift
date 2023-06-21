@@ -7,14 +7,14 @@
 
 import UIKit
 
-class LocationWeatherPagesViewController: UIPageViewController {
+final class LocationWeatherPagesViewController: UIPageViewController {
     
     var startPage: Int?
     var viewModel: LocationWeatherPagesViewModel!
     var locationWeatherViewControllers: [LocationWeatherViewController] = []
     
-    let pageControl = UIPageControl()
-    let listButton = UIButton()
+    private let pageControl = UIPageControl()
+    private let listButton = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,12 +35,12 @@ class LocationWeatherPagesViewController: UIPageViewController {
         navigationController?.isNavigationBarHidden = false
     }
     
-    func setupPageController() {
+    private func setupPageController() {
         delegate = self
         dataSource = self
     }
     
-    func configureListButton() {
+    private func configureListButton() {
         let symbolConfig = UIImage.SymbolConfiguration(font: UIFont.systemFont(ofSize: 20))
         let image = UIImage(systemName: "list.bullet", withConfiguration: symbolConfig)
         listButton.setImage(image, for: .normal)
@@ -48,11 +48,11 @@ class LocationWeatherPagesViewController: UIPageViewController {
         listButton.addTarget(self, action: #selector(listButtonTapped), for: .touchUpInside)
     }
     
-    @objc func listButtonTapped() {
+    @objc private func listButtonTapped() {
         viewModel.listButtonTapped()
     }
     
-    func setupSubviews() {
+    private func setupSubviews() {
         self.view.addSubview(pageControl)
         self.view.addSubview(listButton)
         pageControl.translatesAutoresizingMaskIntoConstraints = false
@@ -68,7 +68,7 @@ class LocationWeatherPagesViewController: UIPageViewController {
         ])
     }
     
-    func setupPages() {
+    private func setupPages() {
         viewModel.makeDetailWeatherViewModels()
         guard let currentDetailViewModel = viewModel.currentDetailViewModel else { return }
         let currentLocationVC = LocationWeatherViewController(viewModel: currentDetailViewModel)
@@ -82,7 +82,7 @@ class LocationWeatherPagesViewController: UIPageViewController {
         self.setViewControllers([locationWeatherViewControllers[currentPage]], direction: .forward, animated: true)
     }
     
-    func setupPageControl() {
+    private func setupPageControl() {
         pageControl.tintColor = UIColor(rgb: 0x121212)
         pageControl.pageIndicatorTintColor = UIColor(rgb: 0x8E8E8F)
         pageControl.currentPageIndicatorTintColor = UIColor(rgb: 0xFFFFFF)

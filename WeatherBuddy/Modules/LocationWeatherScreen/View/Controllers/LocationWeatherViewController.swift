@@ -8,15 +8,15 @@
 import Foundation
 import UIKit
 
-class LocationWeatherViewController: UIViewController {
+final class LocationWeatherViewController: UIViewController {
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<LocationWeatherViewModel.Section, LocationWeatherViewModel.Item>
     typealias SnapshotType = NSDiffableDataSourceSnapshot<LocationWeatherViewModel.Section, LocationWeatherViewModel.Item>
     
     static let sectionBackgroundDecorationElementKind = "section-background-element-kind"
     
-    let viewModel: LocationWeatherViewModel
-    var dataSource: DataSourceType!
+    private let viewModel: LocationWeatherViewModel
+    private var dataSource: DataSourceType!
     
     var weatherView: LocationWeatherView! {
         guard isViewLoaded else { return nil }
@@ -48,7 +48,7 @@ class LocationWeatherViewController: UIViewController {
         setupBindings()
     }
 
-    func setupBindings() {
+    private func setupBindings() {
         viewModel.currentWeatherViewModel.bind { [weak self] currentWeatherViewModel in
             guard let currentWeatherViewModel else { return }
             self?.weatherView.configure(with: currentWeatherViewModel)
@@ -58,7 +58,7 @@ class LocationWeatherViewController: UIViewController {
         }
     }
     
-    func configureForecastCollectionView() {
+    private func configureForecastCollectionView() {
         collectionView.register(HourlyWeatherCollectionViewCell.self, forCellWithReuseIdentifier: HourlyWeatherCollectionViewCell.reuseIdentifier)
         collectionView.register(DailyWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DailyWeatherCollectionViewCell.reuseIdentifier)
         collectionView.collectionViewLayout = collectionViewLayout()
@@ -68,7 +68,7 @@ class LocationWeatherViewController: UIViewController {
 }
 
 extension LocationWeatherViewController {
-    func collectionViewLayout() -> UICollectionViewCompositionalLayout {
+    private func collectionViewLayout() -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, environment in
             let section: NSCollectionLayoutSection
             
@@ -105,7 +105,7 @@ extension LocationWeatherViewController {
         
     }
     
-    func collectionViewDataSource() -> DataSourceType {
+    private func collectionViewDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
                 case .hourly(let hourlyCellViewModel):
@@ -121,7 +121,7 @@ extension LocationWeatherViewController {
         return dataSource
     }
     
-    func applySnapshot(with cellViewModelsBySection: [LocationWeatherViewModel.Section: [ForecastCellViewModel]]) {
+    private func applySnapshot(with cellViewModelsBySection: [LocationWeatherViewModel.Section: [ForecastCellViewModel]]) {
         var snapshot = SnapshotType()
         for section in LocationWeatherViewModel.Section.allCases {
             snapshot.appendSections([section])

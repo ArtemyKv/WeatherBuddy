@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class CurrentLocationWeatherView: UIView {
+final class CurrentLocationWeatherView: UIView {
     let cityLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 30, weight: .medium)
@@ -107,19 +107,17 @@ class CurrentLocationWeatherView: UIView {
     }
     
     private func setupView() {
-        //Adding view to inner stack
+        addSubviews()
+        setupConstraints()
+    }
+    
+    private func addSubviews() {
         innerVStack.addArrangedSubview(temperatureLabel)
         innerVStack.addArrangedSubview(descriptionLabel)
-        temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-        temperatureLabel.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        
-        //Adding view to middle stack
+  
         middleHStack.addArrangedSubview(imageView)
         middleHStack.addArrangedSubview(innerVStack)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.widthAnchor.constraint(equalTo: middleHStack.widthAnchor, multiplier: 0.4).isActive = true
         
-        //Adding view to outer stack
         outerVStack.addArrangedSubview(cityLabel)
         outerVStack.addArrangedSubview(areaLabel)
         outerVStack.addArrangedSubview(middleHStack)
@@ -128,6 +126,15 @@ class CurrentLocationWeatherView: UIView {
         
         self.addSubview(backgroundView)
         self.addSubview(outerVStack)
+    }
+    
+    func setupConstraints() {
+        temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
+        temperatureLabel.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.widthAnchor.constraint(equalTo: middleHStack.widthAnchor, multiplier: 0.4).isActive = true
+        
         outerVStack.translatesAutoresizingMaskIntoConstraints = false
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         
