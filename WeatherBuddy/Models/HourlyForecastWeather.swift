@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct HourlyForecastWeather: Hashable, Equatable {
+    let unixDate: Double
+    let temperature: Double
+    let conditionIconID: String
+}

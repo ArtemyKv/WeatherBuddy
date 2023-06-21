@@ -15,17 +15,18 @@ class DetailWeatherViewModel {
     var currentWeather: Weather? {
         didSet {
             guard let currentWeather = currentWeather else { return }
-            configureBasicWeatherInfo(with: currentWeather)
+            setupCurrentWeatherViewModel(with: currentWeather)
         }
     }
-    var forecast: [Weather]? {
+    var weatherForecast: [Weather]? {
         didSet {
-            guard let forecast = forecast else { return }
-            configureForecastViewModels(with: forecast)
+            guard let forecast = weatherForecast else { return }
+            setupForecastViewModels(with: forecast)
         }
     }
     
-    var forecastCellViewModels: Box<[Section: [ForecastCellViewModel]]> = Box(value: [:])
+    var currentWeatherViewModel: Box<CurrentWeatherViewModel?> = Box(value: nil)
+    var forecastCellViewModelsBySection: Box<[Section: [ForecastCellViewModel]]> = Box(value: [:])
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -33,22 +34,6 @@ class DetailWeatherViewModel {
         formatter.timeStyle = .short
         return formatter
     }()
-    
-    //MARK: - View properties
-    var cityName = Box(value: "")
-    var areaName = Box(value: "")
-    var temperature = Box(value: "")
-    var weatherDescription = Box(value: "")
-    var date = Box(value: "")
-    var weatherIcon: Box<UIImage?> = Box(value: nil)
-    var feelsLikeTemp = Box(value: "")
-    var pressure = Box(value: "")
-    var humidity = Box(value: "")
-    var visibility = Box(value: "")
-    var windSpeed = Box(value: "")
-    var windDirection = Box(value: "")
-    var windDirectionImage: Box<UIImage?> = Box(value: nil)
-    var weatherColor: Box<UIColor> = Box(value: UIColor.systemBackground)
     
     //MARK: - CollectionView sections and items
     enum Section: CaseIterable {
@@ -62,78 +47,103 @@ class DetailWeatherViewModel {
     }
     
     //MARK: - Methods
-    private func configureBasicWeatherInfo(with weather: Weather) {
-        //Current weather info
-        cityName.value = location.name ?? ""
+    private func setupCurrentWeatherViewModel(with weather: Weather) {
         dateFormatter.timeZone = location.timeZone
-        
+        //Current weather info
+        let cityName = location.name ?? ""
+        var areaName = ""
         if let area = location.administrativeArea, let country = location.country {
-            areaName.value = area + ", " + country
+            areaName = area + ", " + country
         } else if let area = location.administrativeArea, location.country == nil {
-            areaName.value = area
+            areaName = area
         } else {
-            areaName.value = location.country ?? " "
+            areaName = location.country ?? " "
         }
         
-        temperature.value = "\(Int(weather.parameters.temperature))º"
-        weatherDescription.value = weather.description
-        date.value = dateFormatter.string(from: Date())
-        weatherIcon.value = UIImage(named: weather.conditionIconID)
+        let temperature = "\(Int(weather.parameters.temperature))º"
+        let weatherDescription = weather.description
+        let date = dateFormatter.string(from: Date())
+        let weatherIcon = UIImage(named: weather.conditionIconID)
         
         //Weather parameters info
-        feelsLikeTemp.value = "\(Int(weather.parameters.feelsLikeTemperature))º"
-        pressure.value = "\(weather.parameters.pressure) hPa"
-        humidity.value = "\(weather.parameters.humidity) %"
-        visibility.value = "\(weather.visibility) m"
-        windSpeed.value = "\(weather.wind.speed) meter/sec"
+        let feelsLikeTemp = "\(Int(weather.parameters.feelsLikeTemperature))º"
+        let pressure = "\(weather.parameters.pressure) hPa"
+        let humidity = "\(weather.parameters.humidity) %"
+        let visibility = "\(weather.visibility) m"
+        let windSpeed = "\(weather.wind.speed) meter/sec"
         
         let windDirectionInfo = getWindDirectionWith(degrees: weather.wind.degrees)
-        windDirection.value = windDirectionInfo.windDirection.rawValue
-        windDirectionImage.value = windDirectionInfo.windDirectionImage
+        let windDirection = windDirectionInfo.windDirection.rawValue
+        let windDirectionImage = windDirectionInfo.windDirectionImage
         
-        weatherColor.value = UIColor.weatherColor(forIconID: weather.conditionIconID)
+        let weatherColor = UIColor.weatherColor(forIconID: weather.conditionIconID)
+        
+        currentWeatherViewModel.value = CurrentWeatherViewModel(
+            cityName: cityName,
+            areaName: areaName,
+            temperature: temperature,
+            weatherDescription: weatherDescription,
+            date: date,
+            weatherIcon: weatherIcon,
+            feelsLikeTemp: feelsLikeTemp,
+            pressure: pressure,
+            humidity: humidity,
+            visibility: visibility,
+            windSpeed: windSpeed,
+            windDirection: windDirection,
+            windDirectionImage: windDirectionImage,
+            weatherColor: weatherColor
+        )
+        
     }
     
-    private func configureForecastViewModels(with forecast: [Weather]) {
-        configureHourlyForecastViewModel(with: forecast)
-        configureDailyForecastViewModel(with: forecast)
+    private func setupForecastViewModels(with forecast: [Weather]) {
+        setupHourlyForecastViewModel(with: forecast)
+        setupDailyForecastViewModel(with: forecast)
     }
     
-    private func configureHourlyForecastViewModel(with forecast: [Weather]) {
-        forecastCellViewModels.value[.hourly] = []
-        let oneDayWeatherItemsArray = Array(forecast.prefix(through: 15))
-        oneDayWeatherItemsArray.forEach {
-            self.forecastCellViewModels.value[.hourly]?.append(HourlyForecastCellViewModel(weatherItem: $0, timeZone: location.timeZone))
+    private func setupHourlyForecastViewModel(with forecast: [Weather]) {
+        forecastCellViewModelsBySection.value[.hourly] = []
+        let oneDayHourlyWeatherList = forecast
+            .map({HourlyForecastWeather(unixDate: $0.unixDate, temperature: $0.parameters.temperature, conditionIconID: $0.conditionIconID)})
+            .prefix(through: 15)
+        oneDayHourlyWeatherList.forEach {
+            self.forecastCellViewModelsBySection.value[.hourly]?.append(HourlyForecastCellViewModel(hourlyForecastWeather: $0, timeZone: location.timeZone))
         }
     }
     
-    private func configureDailyForecastViewModel(with forecast: [Weather]) {
-        forecastCellViewModels.value[.daily] = []
+    private func setupDailyForecastViewModel(with forecast: [Weather]) {
+        forecastCellViewModelsBySection.value[.daily] = []
+        var dailyForecastByDayNumber = dailyForecastByDayNumber(forecast: forecast)
+        for key in dailyForecastByDayNumber.keys.sorted(by: <) {
+            self.forecastCellViewModelsBySection.value[.daily]?.append(DailyForecastCellViewModel(dailyForecastWeather: dailyForecastByDayNumber[key]!))
+        }
+    }
+    
+    private func dailyForecastByDayNumber(forecast: [Weather]) -> [Int: DailyForecastWeather] {
         let calendar = Calendar.current
-        var dailyForecastsDict: [Int: DailyForecastWeather] = [:]
+        var dailyForecastByDayNumber: [Int: DailyForecastWeather] = [:]
         for item in forecast {
             let weekdayNumber = calendar.component(.weekday, from: Date(timeIntervalSince1970: item.unixDate))
             let dayNumber = calendar.component(.day, from: Date(timeIntervalSince1970: item.unixDate))
             let temperature = item.parameters.temperature
-            guard let parameters = dailyForecastsDict[dayNumber] else {
-                dailyForecastsDict[dayNumber] = DailyForecastWeather(minTemp: temperature,
-                                                                         maxTemp: temperature,
-                                                                         icons: [item.conditionIconID],
-                                                                         weekday: weekdayNumber)
+            guard let parameters = dailyForecastByDayNumber[dayNumber] else {
+                dailyForecastByDayNumber[dayNumber] = DailyForecastWeather(
+                    minTemp: temperature,
+                    maxTemp: temperature,
+                    icons: [item.conditionIconID],
+                    weekday: weekdayNumber
+                )
                 continue
             }
-            
             if temperature < parameters.minTemp {
-                dailyForecastsDict[dayNumber]?.minTemp = temperature
+                dailyForecastByDayNumber[dayNumber]?.minTemp = temperature
             } else if temperature >  parameters.maxTemp {
-                dailyForecastsDict[dayNumber]?.maxTemp = temperature
+                dailyForecastByDayNumber[dayNumber]?.maxTemp = temperature
             }
-            dailyForecastsDict[dayNumber]?.icons.append(item.conditionIconID)
+            dailyForecastByDayNumber[dayNumber]?.icons.append(item.conditionIconID)
         }
-        
-        for key in dailyForecastsDict.keys.sorted(by: <) {
-            self.forecastCellViewModels.value[.daily]?.append(DailyForecastCellViewModel(dailyForecastWeather: dailyForecastsDict[key]!))
-        }
+        return dailyForecastByDayNumber
     }
     
     init(location: Location) {

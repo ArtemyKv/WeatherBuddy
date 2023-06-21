@@ -40,6 +40,18 @@ class WeatherPagesViewController: UIPageViewController {
         dataSource = self
     }
     
+    func configureListButton() {
+        let symbolConfig = UIImage.SymbolConfiguration(font: UIFont.systemFont(ofSize: 20))
+        let image = UIImage(systemName: "list.bullet", withConfiguration: symbolConfig)
+        listButton.setImage(image, for: .normal)
+        listButton.imageView?.tintColor = .systemRed
+        listButton.addTarget(self, action: #selector(listButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc func listButtonTapped() {
+        viewModel.listButtonTapped()
+    }
+    
     func setupSubviews() {
         self.view.addSubview(pageControl)
         self.view.addSubview(listButton)
@@ -56,18 +68,6 @@ class WeatherPagesViewController: UIPageViewController {
         ])
     }
     
-    func configureListButton() {
-        let symbolConfig = UIImage.SymbolConfiguration(font: UIFont.systemFont(ofSize: 20))
-        let image = UIImage(systemName: "list.bullet", withConfiguration: symbolConfig)
-        listButton.setImage(image, for: .normal)
-        listButton.imageView?.tintColor = .systemRed
-        listButton.addTarget(self, action: #selector(listButtonTapped), for: .touchUpInside)
-    }
-    
-    @objc func listButtonTapped() {
-        viewModel.listButtonTapped()
-    }
-
     func setupPages() {
         viewModel.makeDetailWeatherViewModels()
         guard let currentDetailViewModel = viewModel.currentDetailViewModel else { return }

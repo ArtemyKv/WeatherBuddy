@@ -29,25 +29,51 @@ class WeatherDetailView: UIView {
         return collectionView
     }()
     
+    override init(frame: CGRect) {
+        super .init(frame: frame)
+        setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private func setupView() {
-        //Sample background color
         backgroundColor = .systemOrange
+        currentWeatherIsVisible = true
+        addSubviews()
+        addGestures()
+        setupConstraints()
         
-        //Adding outer stack and collection view to superview
+    }
+    
+    private func addSubviews() {
         containerView.addSubview(currentWeatherView)
         containerView.addSubview(weatherParametersView)
-        
-        currentWeatherIsVisible = true
-        
+        self.addSubview(containerView)
+        self.addSubview(collectionView)
+    }
+    
+    private func addGestures() {
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(flipViews))
         containerView.addGestureRecognizer(tapRecognizer)
+    }
+    
+    @objc private func flipViews() {
+        let transitionDirection: UIView.AnimationOptions = currentWeatherIsVisible ? .transitionFlipFromTop : .transitionFlipFromBottom
         
-        self.addSubview(containerView)
+        UIView.transition(from: currentWeatherIsVisible ? currentWeatherView : weatherParametersView,
+                          to: currentWeatherIsVisible ? weatherParametersView : currentWeatherView,
+                          duration: 0.5,
+                          options: [transitionDirection, .showHideTransitionViews])
+        
+        currentWeatherIsVisible.toggle()
+    }
+    
+    private func setupConstraints() {
         currentWeatherView.translatesAutoresizingMaskIntoConstraints = false
         weatherParametersView.translatesAutoresizingMaskIntoConstraints = false
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        
-        self.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -68,26 +94,11 @@ class WeatherDetailView: UIView {
             collectionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
-        
     }
     
-    @objc func flipViews() {
-        let transitionDirection: UIView.AnimationOptions = currentWeatherIsVisible ? .transitionFlipFromTop : .transitionFlipFromBottom
-        
-        UIView.transition(from: currentWeatherIsVisible ? currentWeatherView : weatherParametersView,
-                          to: currentWeatherIsVisible ? weatherParametersView : currentWeatherView,
-                          duration: 0.5,
-                          options: [transitionDirection, .showHideTransitionViews])
-        
-        currentWeatherIsVisible.toggle()
-    }
-    
-    override init(frame: CGRect) {
-        super .init(frame: frame)
-        setupView()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func configure(with currentWeatherViewModel: CurrentWeatherViewModel) {
+        backgroundColor = currentWeatherViewModel.weatherColor
+        currentWeatherView.configure(with: currentWeatherViewModel)
+        weatherParametersView.configure(with: currentWeatherViewModel)
     }
 }

@@ -40,7 +40,7 @@ class WeatherParametersView: UIView {
     lazy var windSpeedLabel = parameterLabel()
     lazy var windDirectionLabel = parameterLabel()
     
-    let windDirectionImage: UIImageView = {
+    let windDirectionImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
@@ -72,6 +72,15 @@ class WeatherParametersView: UIView {
         view.clipsToBounds = true
         return view
     }()
+    
+    override init(frame: CGRect) {
+        super .init(frame: frame)
+        setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private func parameterLabel() -> UILabel {
         let label = UILabel()
@@ -108,7 +117,7 @@ class WeatherParametersView: UIView {
             hStack.addArrangedSubview(titleLabel)
             
             if title == .windDirection {
-                hStack.addArrangedSubview(windDirectionImage)
+                hStack.addArrangedSubview(windDirectionImageView)
             }
             
             hStack.addArrangedSubview(parameterLabel)
@@ -132,12 +141,15 @@ class WeatherParametersView: UIView {
         ])
     }
     
-    override init(frame: CGRect) {
-        super .init(frame: frame)
-        setupView()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func configure(with viewModel: CurrentWeatherViewModel) {
+        cityLabel.text = viewModel.cityName
+        temperatureLabel.text = viewModel.temperature
+        feelsLikeLabel.text = viewModel.feelsLikeTemp
+        pressureLabel.text = viewModel.pressure
+        humidityLabel.text = viewModel.humidity
+        visibilityLabel.text = viewModel.visibility
+        windSpeedLabel.text = viewModel.windSpeed
+        windSpeedLabel.text = viewModel.windDirection
+        windDirectionImageView.image = viewModel.windDirectionImage
     }
 }

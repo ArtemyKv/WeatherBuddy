@@ -32,7 +32,7 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
-    let vStack: UIStackView = {
+    private let vStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .fill
@@ -41,7 +41,16 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
         return stack
     }()
     
-    func setupView() {
+    override init(frame: CGRect) {
+        super .init(frame: frame)
+        setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupView() {
         vStack.addArrangedSubview(hourLabel)
         vStack.addArrangedSubview(imageView)
         vStack.addArrangedSubview(temperatureLabel)
@@ -57,12 +66,9 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    override init(frame: CGRect) {
-        super .init(frame: frame)
-        setupView()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func configure(with viewModel: HourlyForecastCellViewModel) {
+        hourLabel.text = viewModel.hour
+        temperatureLabel.text = viewModel.temperature
+        imageView.image = viewModel.weatherIcon
     }
 }

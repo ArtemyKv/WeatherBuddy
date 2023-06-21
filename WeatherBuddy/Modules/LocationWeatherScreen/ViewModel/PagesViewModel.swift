@@ -41,14 +41,14 @@ class PagesViewModel {
     
     @objc private func updateCurrentLocationDetailViewModel() {
         currentDetailViewModel?.currentWeather = weatherController.currentLocationWeather
-        currentDetailViewModel?.forecast = weatherController.currentLocationForecast
+        currentDetailViewModel?.weatherForecast = weatherController.currentLocationForecast
     }
     
     @objc private func updateFavoriteLocationsDetailViewModels() {
         for i in 0..<weatherController.favoriteLocationsCount() {
             let location = weatherController.favoriteLocation(at: i)!
             favoritesDetailWeatherViewModels[i].currentWeather = weatherController.weatherByLocation[location]
-            favoritesDetailWeatherViewModels[i].forecast = weatherController.forecastByLocation[location]
+            favoritesDetailWeatherViewModels[i].weatherForecast = weatherController.forecastByLocation[location]
         }
     }
     

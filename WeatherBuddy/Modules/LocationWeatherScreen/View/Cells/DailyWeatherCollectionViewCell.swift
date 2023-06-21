@@ -38,7 +38,7 @@ class DailyWeatherCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
-    let hStack: UIStackView = {
+    private let hStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.alignment = .fill
@@ -47,7 +47,16 @@ class DailyWeatherCollectionViewCell: UICollectionViewCell {
         return stack
     }()
     
-    func setupView() {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupView() {
         hStack.addArrangedSubview(weekdayLabel)
         hStack.addArrangedSubview(imageView)
         hStack.addArrangedSubview(minTempLabel)
@@ -68,13 +77,10 @@ class DailyWeatherCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupView()
+    func configure(with viewModel: DailyForecastCellViewModel) {
+        weekdayLabel.text = viewModel.weekDayString
+        minTempLabel.text = viewModel.minTemperature
+        maxTempLabel.text = viewModel.maxTemperature
+        imageView.image = viewModel.weatherIcon
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
 }

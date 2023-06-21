@@ -97,6 +97,15 @@ class CurrentWeatherView: UIView {
         return vStack
     }()
     
+    override init(frame: CGRect) {
+        super .init(frame: frame)
+        setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private func setupView() {
         //Adding view to inner stack
         innerVStack.addArrangedSubview(temperatureLabel)
@@ -134,12 +143,12 @@ class CurrentWeatherView: UIView {
         ])
     }
     
-    override init(frame: CGRect) {
-        super .init(frame: frame)
-        setupView()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func configure(with viewModel: CurrentWeatherViewModel) {
+        cityLabel.text = viewModel.cityName
+        areaLabel.text = viewModel.areaName
+        temperatureLabel.text = viewModel.temperature
+        descriptionLabel.text = viewModel.weatherDescription
+        dateLabel.text = viewModel.date
+        imageView.image = viewModel.weatherIcon
     }
 }

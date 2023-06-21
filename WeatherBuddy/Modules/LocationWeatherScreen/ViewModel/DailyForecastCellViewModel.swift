@@ -10,19 +10,18 @@ import UIKit.UIImage
 
 class DailyForecastCellViewModel: ForecastCellViewModel {
     
-    var dailyForecastWeather: DailyForecastWeather {
+    private var dailyForecastWeather: DailyForecastWeather {
         didSet {
-            configureViewModel()
+            configure()
         }
     }
-    
     
     var minTemperature: String = ""
     var maxTemperature: String = ""
     var weekDayString: String = ""
     var weatherIcon: UIImage? = nil
     
-    func configureViewModel() {
+    private func configure() {
         let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         
         weekDayString = weekdays[dailyForecastWeather.weekday - 1]
@@ -31,7 +30,7 @@ class DailyForecastCellViewModel: ForecastCellViewModel {
         weatherIcon = UIImage(named: averageWeatherIconID())
     }
     
-    func averageWeatherIconID() -> String {
+    private func averageWeatherIconID() -> String {
         var iconsCountDict = [String: Int]()
         for icon in dailyForecastWeather.icons {
             let condition = String(icon[..<icon.index(before: icon.endIndex)])
@@ -43,7 +42,7 @@ class DailyForecastCellViewModel: ForecastCellViewModel {
     
     init(dailyForecastWeather: DailyForecastWeather) {
         self.dailyForecastWeather = dailyForecastWeather
-        configureViewModel()
+        configure()
     }
 }
 
