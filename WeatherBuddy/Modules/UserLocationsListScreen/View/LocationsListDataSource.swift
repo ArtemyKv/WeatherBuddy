@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class LocationsListDataSource: UITableViewDiffableDataSource<LocationsListViewModel.Section, LocationsListCellViewModel> {
+final class LocationsListDataSource: UITableViewDiffableDataSource<LocationsListViewModel.Section, LocationsListCellViewModel> {
     
     var reorderingHandler: ((_ sourceIndex: Int, _ destinationIndex: Int) -> (Void))?
     var deletionHandler: ((_ index: Int) -> (Void))?

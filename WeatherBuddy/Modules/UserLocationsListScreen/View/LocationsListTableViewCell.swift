@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LocationsListTableViewCell: UITableViewCell {
+final class LocationsListTableViewCell: UITableViewCell {
     
     static let reuseIdentifier = "LocationsListTableViewCell"
     
@@ -40,7 +40,7 @@ class LocationsListTableViewCell: UITableViewCell {
         return imageView
     }()
     
-    let hStack: UIStackView = {
+    private let hStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.alignment = .center
@@ -49,7 +49,7 @@ class LocationsListTableViewCell: UITableViewCell {
         return stack
     }()
     
-    let vStack: UIStackView = {
+    private let vStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .fill
@@ -59,12 +59,21 @@ class LocationsListTableViewCell: UITableViewCell {
         return stack
     }()
     
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super .init(style: style, reuseIdentifier: reuseIdentifier)
+        setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func layoutSubviews() {
         super .layoutSubviews()
         self.contentView.frame = self.contentView.frame.inset(by: UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8))
     }
     
-    func setupView() {
+    private func setupView() {
         vStack.addArrangedSubview(locationLabel)
         vStack.addArrangedSubview(conditionLabel)
         hStack.addArrangedSubview(vStack)
@@ -86,7 +95,7 @@ class LocationsListTableViewCell: UITableViewCell {
         ])
     }
     
-    func animateSelection(completion: @escaping () -> Void) {        
+    func animateSelection(completion: @escaping () -> Void) {
         UIView.animate(
             withDuration: 0.3,
             delay: 0.0,
@@ -100,14 +109,5 @@ class LocationsListTableViewCell: UITableViewCell {
                 }
                 completion()
             })
-    }
-        
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super .init(style: style, reuseIdentifier: reuseIdentifier)
-        setupView()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

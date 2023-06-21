@@ -8,12 +8,14 @@
 import Foundation
 import UIKit.UIImage
 
-class LocationsListCellViewModel {
+final class LocationsListCellViewModel {
+    
     var briefCurrentWeather: BriefCurrentWeather? {
         didSet {
-            configureViewModel()
+            configure()
         }
     }
+    
     let locationName: String
     
     var temperature = Box(value: "--")
@@ -23,7 +25,7 @@ class LocationsListCellViewModel {
     var backgroundColor = Box(value: UIColor.cyan)
     
     
-    func configureViewModel() {
+    private func configure() {
         location.value = locationName
         if let briefCurrentWeather = briefCurrentWeather {
             temperature.value = "\(Int(briefCurrentWeather.temperature))º"
@@ -36,7 +38,7 @@ class LocationsListCellViewModel {
     init(locationName: String, briefCurrentWeather: BriefCurrentWeather? = nil) {
         self.locationName = locationName
         self.briefCurrentWeather = briefCurrentWeather
-        configureViewModel()
+        configure()
     }
 }
 

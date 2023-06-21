@@ -8,21 +8,21 @@
 import Foundation
 import UIKit
 
-class LocationsListViewController: UIViewController {
+final class LocationsListViewController: UIViewController {
     typealias SnapshotType = NSDiffableDataSourceSnapshot<LocationsListViewModel.Section, LocationsListCellViewModel>
     
-    let viewModel: LocationsListViewModel
-    var dataSource: LocationsListDataSource!
+    private let viewModel: LocationsListViewModel
+    private var dataSource: LocationsListDataSource!
     
-    let transition = PushAnimator()
-    var selectedCellFrame: CGRect = .zero
+    private let transition = PushAnimator()
+    private var selectedCellFrame: CGRect = .zero
     
-    var locationsListView: LocationsListView! {
+    private var locationsListView: LocationsListView! {
         guard isViewLoaded else { return nil }
         return (view as! LocationsListView)
     }
     
-    var tableView: UITableView {
+    private var tableView: UITableView {
         return locationsListView.tableView
     }
     
@@ -51,7 +51,7 @@ class LocationsListViewController: UIViewController {
         configureTableView()
     }
     
-    func setupBindings() {
+    private func setupBindings() {
         viewModel.favoriteLocationsCellViewModels.bind { [weak self] _ in
             self?.applySnapshot(isReloadingData: false)
         }
@@ -60,7 +60,7 @@ class LocationsListViewController: UIViewController {
         }
     }
     
-    func setupDataSource() {
+    private func setupDataSource() {
         let dataSource = LocationsListDataSource(tableView: tableView) { tableView, indexPath, cellViewModel in
             let cell = tableView.dequeueReusableCell(withIdentifier: LocationsListTableViewCell.reuseIdentifier,
                                                      for: indexPath) as! LocationsListTableViewCell
@@ -84,7 +84,7 @@ class LocationsListViewController: UIViewController {
         self.dataSource = dataSource
     }
     
-    func configureTableView() {
+    private func configureTableView() {
         tableView.dataSource = dataSource
         tableView.delegate = self
         tableView.register(LocationsListTableViewCell.self, forCellReuseIdentifier: LocationsListTableViewCell.reuseIdentifier)
@@ -92,7 +92,7 @@ class LocationsListViewController: UIViewController {
         tableView.backgroundColor = .white
     }
     
-    func configureNavigationItem() {
+    private func configureNavigationItem() {
         let addButton = UIBarButtonItem(systemItem: .add)
         addButton.tintColor = .black
         addButton.target = self
@@ -102,12 +102,11 @@ class LocationsListViewController: UIViewController {
         navigationItem.title = "Weather Buddy"
     }
     
-    @objc func addButtonTapped() {
+    @objc private func addButtonTapped() {
         viewModel.addButtonTapped()
     }
     
-    
-    func applySnapshot(isReloadingData: Bool) {
+    private func applySnapshot(isReloadingData: Bool) {
         var snapshot = SnapshotType()
         snapshot.appendSections([LocationsListViewModel.Section.current])
         if let currentLocationCellViewModel = viewModel.currentLocationCellViewModel.value {
@@ -124,14 +123,14 @@ class LocationsListViewController: UIViewController {
         }
     }
     
-    func setupTableViewReordering() {
+    private func setupTableViewReordering() {
         self.dataSource.reorderingHandler = { [weak self] sourceIndex, destinationIndex in
             guard let self = self else { return }
             self.viewModel.moveCell(at: sourceIndex, to: destinationIndex)
         }
     }
     
-    func setupRowDeletion() {
+    private func setupRowDeletion() {
         self.dataSource.deletionHandler = { [weak self] index in
             guard let self = self else { return }
             self.viewModel.deleteCell(at: index)

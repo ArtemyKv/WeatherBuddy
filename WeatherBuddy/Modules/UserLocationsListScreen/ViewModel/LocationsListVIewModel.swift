@@ -7,10 +7,10 @@
 
 import Foundation
 
-class LocationsListViewModel {
+final class LocationsListViewModel {
     
-    var weatherController: WeatherController!
-    var coordinator: Coordinator!
+    private let weatherController: WeatherController
+    private let coordinator: Coordinator
     
     var favoriteLocationsCellViewModels: Box<[LocationsListCellViewModel]> = Box(value: [])
     var currentLocationCellViewModel: Box<LocationsListCellViewModel?> = Box(value: nil)
@@ -20,7 +20,9 @@ class LocationsListViewModel {
         case favorite
     }
     
-    init() {
+    init(weatherController: WeatherController, coordinator: Coordinator) {
+        self.weatherController = weatherController
+        self.coordinator = coordinator
         setupNotificationObservers()
     }
     
@@ -34,30 +36,30 @@ class LocationsListViewModel {
         
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(updateCurrentCellViewModel),
+            selector: #selector(updateCurrentLocationCellViewModel),
             name: WeatherController.didSetWeatherForCurrentLocationNotification,
             object: nil
         )
         
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(updateFavoriteCellViewModels),
+            selector: #selector(updateFavoriteLocationsCellViewModels),
             name: WeatherController.didSetWeatherForFavoriteLocationsNotification,
             object: nil
         )
     }
     
     @objc private func makeCellViewModels() {
-        makeCurrentCellViewModel()
-        makeFavoriteCellViewModels()
+        makeCurrentLocationCellViewModel()
+        makeFavoriteLocationsCellViewModels()
     }
  
-    private func makeCurrentCellViewModel() {
+    private func makeCurrentLocationCellViewModel() {
         guard let location = weatherController.currentLocation() else { return }
         currentLocationCellViewModel.value = cellViewModel(forLocation: location, isCurrentLocation: true)
     }
     
-    private func makeFavoriteCellViewModels() {
+    private func makeFavoriteLocationsCellViewModels() {
         for i in 0..<weatherController.favoriteLocationsCount() {
             let location = weatherController.favoriteLocation(at: i)!
             let cellViewModel = cellViewModel(forLocation: location, isCurrentLocation: false)
@@ -65,13 +67,13 @@ class LocationsListViewModel {
         }
     }
     
-    @objc private func updateCurrentCellViewModel() {
+    @objc private func updateCurrentLocationCellViewModel() {
         guard let location = weatherController.currentLocation(),
               let cellViewModel = currentLocationCellViewModel.value else { return }
         updateCellViewModel(cellViewModel, forLocation: location, isCurrentLocation: true)
     }
     
-    @objc private func updateFavoriteCellViewModels() {
+    @objc private func updateFavoriteLocationsCellViewModels() {
         for i in 0..<weatherController.favoriteLocationsCount() {
             let location = weatherController.favoriteLocation(at: i)!
             let cellViewModel = favoriteLocationsCellViewModels.value[i]
@@ -84,13 +86,13 @@ class LocationsListViewModel {
         cellViewModel.briefCurrentWeather = briefWeather
     }
     
-    func makeCellViewModelForNewLocation(location: Location) {
+    private func makeCellViewModelForNewLocation(location: Location) {
         let cellViewModel = cellViewModel(forLocation: location, isCurrentLocation: false)
         favoriteLocationsCellViewModels.value.append(cellViewModel)
         updateCellViewModel(cellViewModel, forLocation: location, isCurrentLocation: false)
     }
     
-    func cellViewModel(forLocation location: Location, isCurrentLocation: Bool) -> LocationsListCellViewModel {
+    private func cellViewModel(forLocation location: Location, isCurrentLocation: Bool) -> LocationsListCellViewModel {
         let briefWeather = weatherController.briefWeather(forLocation: location, isCurrentLocation: isCurrentLocation)
         let locationName = location.name ?? location.administrativeArea ?? "No location name"
         let cellViewModel = LocationsListCellViewModel(locationName: locationName, briefCurrentWeather: briefWeather)

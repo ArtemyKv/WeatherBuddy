@@ -22,9 +22,7 @@ class MainBuilder: Builder {
     }
     
     func locationsListScreen(coordinator: Coordinator) -> LocationsListViewController {
-        let locationsListViewModel = LocationsListViewModel()
-        locationsListViewModel.weatherController = weatherController
-        locationsListViewModel.coordinator = coordinator
+        let locationsListViewModel = LocationsListViewModel(weatherController: weatherController, coordinator: coordinator)
         let locationsListVC = LocationsListViewController(viewModel: locationsListViewModel)
         return locationsListVC
     }

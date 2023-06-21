@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LocationsListSectionHeader: UIView {
+final class LocationsListSectionHeader: UIView {
     let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .medium)
@@ -23,7 +23,7 @@ class LocationsListSectionHeader: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupView() {
+    private func setupView() {
         addSubview(titleLabel)
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LocationsListView: UIView {
+final class LocationsListView: UIView {
     let tableView = UITableView(frame: CGRect.zero, style: .grouped)
     
     override init(frame: CGRect) {
@@ -19,7 +19,7 @@ class LocationsListView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupView() {
+    private func setupView() {
         backgroundColor = .systemBackground
         addSubview(tableView)
         
