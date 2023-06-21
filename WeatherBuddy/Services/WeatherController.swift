@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-class WeatherController {
+final class WeatherController {
     //MARK: - Static properties (notification names)
     static let didSetLocationsNotification = Notification.Name("WeatherController.didSetLocations")
     static let didSetWeatherForCurrentLocationNotification = Notification.Name("WeatherController.didSetWeatherForCurrentLocation")

@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 import CoreData
 
-class GeocodingService {
+final class GeocodingService {
     private let geocoder = CLGeocoder()
     
     var coreDataStack: CoreDataStack!

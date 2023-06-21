@@ -14,7 +14,7 @@ enum WeatherFetchingError: Error {
     case invalidData
 }
 
-class WeatherFetchingService {
+final class WeatherFetchingService {
     
     private let apiKey = "42abe6b8696e0ab3543581a5d840e8f4"
     private let scheme = "https"

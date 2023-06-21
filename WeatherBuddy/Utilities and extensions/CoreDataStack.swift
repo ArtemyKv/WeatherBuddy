@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-class CoreDataStack {
+final class CoreDataStack {
     private let modelName: String
     lazy var managedContext: NSManagedObjectContext = {
         return self.storeContainer.viewContext
@@ -20,10 +20,6 @@ class CoreDataStack {
         return context
     }()
     
-    init(modelName: String) {
-        self.modelName = modelName
-    }
-    
     lazy private var storeContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: self.modelName)
         container.loadPersistentStores { _, error in
@@ -33,6 +29,10 @@ class CoreDataStack {
         }
         return container
     }()
+    
+    init(modelName: String) {
+        self.modelName = modelName
+    }
     
     func saveContext() {
         guard managedContext.hasChanges else { return }

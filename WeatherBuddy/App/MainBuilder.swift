@@ -13,9 +13,9 @@ protocol Builder {
     func searchScreen(coordinator: Coordinator, searchScreenDelegate delegate: SearchViewModelDelegate) -> SearchTableViewController
 }
 
-class MainBuilder: Builder {
+final class MainBuilder: Builder {
     
-    let weatherController: WeatherController
+    private let weatherController: WeatherController
     
     init(weatherController: WeatherController) {
         self.weatherController = weatherController

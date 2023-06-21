@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class PushAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+final class PushAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     let animationDuration = 0.5
     var originFrame = CGRect.zero
     var operation: UINavigationController.Operation = .push

@@ -12,11 +12,17 @@ protocol LocationServiceDelegate {
     func updateLocationWith(latitude: Double, longitude: Double)
 }
 
-class LocationService: NSObject, CLLocationManagerDelegate {
+final class LocationService: NSObject, CLLocationManagerDelegate {
     
     var delegate: LocationServiceDelegate?
     
-    let locationManager = CLLocationManager()
+    private let locationManager = CLLocationManager()
+    
+    override init() {
+        super .init()
+        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        locationManager.delegate = self
+    }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
@@ -47,11 +53,5 @@ class LocationService: NSObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Error: \(error), \(error.localizedDescription)")
-    }
-    
-    override init() {
-        super .init()
-        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
-        locationManager.delegate = self
     }
 }

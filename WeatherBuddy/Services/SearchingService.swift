@@ -11,10 +11,15 @@ protocol SearchingServiceDelegate: AnyObject {
     func searchResultsUpdated(withResults results: [SearchingService.SearchResult])
 }
 
-class SearchingService: NSObject {
+final class SearchingService: NSObject {
     let searchCompleter = MKLocalSearchCompleter()
     
     weak var delegate: SearchingServiceDelegate?
+    
+    override init() {
+        super.init()
+        setupCompleter()
+    }
     
     private func setupCompleter() {
         searchCompleter.delegate = self
@@ -24,11 +29,6 @@ class SearchingService: NSObject {
     
     func startSearch(withSearchString searchString: String) {
         searchCompleter.queryFragment = searchString
-    }
-    
-    override init() {
-        super.init()
-        setupCompleter()
     }
 }
 

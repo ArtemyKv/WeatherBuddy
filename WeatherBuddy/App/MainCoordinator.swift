@@ -15,10 +15,10 @@ protocol Coordinator {
     func dismissCurrentScreen()
 }
 
-class MainCoordinator: Coordinator {
+final class MainCoordinator: Coordinator {
     
-    let builder: Builder
-    let navigationController: UINavigationController
+    private let builder: Builder
+    private let navigationController: UINavigationController
     
     init(builder: Builder, navigationController: UINavigationController) {
         self.builder = builder
