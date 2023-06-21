@@ -1,5 +1,5 @@
 //
-//  CurrentWeatherView.swift
+//  CurrentLocationWeatherView.swift
 //  WeatherBuddy
 //
 //  Created by Artem Kvashnin on 03.10.2022.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class CurrentWeatherView: UIView {
+class CurrentLocationWeatherView: UIView {
     let cityLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 30, weight: .medium)

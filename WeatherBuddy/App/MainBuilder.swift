@@ -9,7 +9,7 @@ import Foundation
 
 protocol Builder {
     func locationsListScreen(coordinator: Coordinator) -> LocationsListViewController
-    func weatherPagesScreen(coordinator: Coordinator, startPage: Int) -> WeatherPagesViewController
+    func weatherPagesScreen(coordinator: Coordinator, startPage: Int) -> LocationWeatherPagesViewController
     func searchScreen(coordinator: Coordinator, searchScreenDelegate delegate: SearchViewModelDelegate) -> SearchTableViewController
 }
 
@@ -27,9 +27,9 @@ class MainBuilder: Builder {
         return locationsListVC
     }
     
-    func weatherPagesScreen(coordinator: Coordinator, startPage: Int) -> WeatherPagesViewController {
-        let pagesViewModel = PagesViewModel(coordinator: coordinator, weatherController: weatherController)
-        let pagesVC = WeatherPagesViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+    func weatherPagesScreen(coordinator: Coordinator, startPage: Int) -> LocationWeatherPagesViewController {
+        let pagesViewModel = LocationWeatherPagesViewModel(coordinator: coordinator, weatherController: weatherController)
+        let pagesVC = LocationWeatherPagesViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
         pagesVC.viewModel = pagesViewModel
         pagesVC.startPage = startPage
         return pagesVC

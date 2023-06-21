@@ -1,5 +1,5 @@
 //
-//  CurrentWeatherView.swift
+//  LocationWeatherView.swift
 //  WeatherBuddy
 //
 //  Created by Artem Kvashnin on 17.09.2022.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class WeatherDetailView: UIView {
+class LocationWeatherView: UIView {
     
     var currentWeatherIsVisible: Bool = true {
         didSet {
@@ -17,8 +17,8 @@ class WeatherDetailView: UIView {
         }
     }
     
-    let currentWeatherView = CurrentWeatherView()
-    let weatherParametersView = WeatherParametersView()
+    let currentWeatherView = CurrentLocationWeatherView()
+    let weatherParametersView = LocationWeatherParametersView()
     
     private let containerView = UIView()
     

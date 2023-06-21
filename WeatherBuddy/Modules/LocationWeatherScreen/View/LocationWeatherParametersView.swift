@@ -1,5 +1,5 @@
 //
-//  WeatherParametersView.swift
+//  LocationWeatherParametersView.swift
 //  WeatherBuddy
 //
 //  Created by Artem Kvashnin on 03.10.2022.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class WeatherParametersView: UIView {
+class LocationWeatherParametersView: UIView {
     
    private enum Title: String, CaseIterable {
         case feelsLike = "Feels Like"

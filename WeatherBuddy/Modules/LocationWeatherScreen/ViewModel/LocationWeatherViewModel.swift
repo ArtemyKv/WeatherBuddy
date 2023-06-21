@@ -1,5 +1,5 @@
 //
-//  CurrentWeatherViewModel.swift
+//  LocationWeatherViewModel.swift
 //  WeatherBuddy
 //
 //  Created by Artem Kvashnin on 19.09.2022.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit.UIImage
 
-class DetailWeatherViewModel {
+class LocationWeatherViewModel {
     //MARK: - Model properties
     var location: Location
     
@@ -151,7 +151,7 @@ class DetailWeatherViewModel {
     }
 }
 
-extension DetailWeatherViewModel {
+extension LocationWeatherViewModel {
     
     enum WindDirection: String {
         case north = "N"

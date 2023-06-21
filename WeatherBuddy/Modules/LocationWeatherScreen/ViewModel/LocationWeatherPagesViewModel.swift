@@ -1,5 +1,5 @@
 //
-//  PagesViewModel.swift
+//  LocationWeatherPagesViewModel.swift
 //  WeatherBuddy
 //
 //  Created by Artem Kvashnin on 16.06.2023.
@@ -7,13 +7,13 @@
 
 import Foundation
 
-class PagesViewModel {
+class LocationWeatherPagesViewModel {
     
     let coordinator: Coordinator
     let weatherController: WeatherController
     
-    private(set) var currentDetailViewModel: DetailWeatherViewModel?
-    private(set) var favoritesDetailWeatherViewModels: [DetailWeatherViewModel] = []
+    private(set) var currentDetailViewModel: LocationWeatherViewModel?
+    private(set) var favoritesDetailWeatherViewModels: [LocationWeatherViewModel] = []
     
     init(coordinator: Coordinator, weatherController: WeatherController) {
         self.coordinator = coordinator
@@ -54,13 +54,13 @@ class PagesViewModel {
     
     func makeDetailWeatherViewModels() {
         if let currentLocation = weatherController.currentLocation() {
-            let currentLocationDetailViewModel = DetailWeatherViewModel(location: currentLocation)
+            let currentLocationDetailViewModel = LocationWeatherViewModel(location: currentLocation)
             currentDetailViewModel = currentLocationDetailViewModel
         }
         
         for i in 0..<weatherController.favoriteLocationsCount() {
             let location = weatherController.favoriteLocation(at: i)!
-            let favoriteLocationDetailViewModel = DetailWeatherViewModel(location: location)
+            let favoriteLocationDetailViewModel = LocationWeatherViewModel(location: location)
             favoritesDetailWeatherViewModels.append(favoriteLocationDetailViewModel)
         }
         updateCurrentLocationDetailViewModel()

@@ -1,5 +1,5 @@
 //
-//  WeatherPagesViewController.swift
+//  LocationWeatherPagesViewController.swift
 //  WeatherBuddy
 //
 //  Created by Artem Kvashnin on 05.10.2022.
@@ -7,10 +7,10 @@
 
 import UIKit
 
-class WeatherPagesViewController: UIPageViewController {
+class LocationWeatherPagesViewController: UIPageViewController {
     
     var startPage: Int?
-    var viewModel: PagesViewModel!
+    var viewModel: LocationWeatherPagesViewModel!
     var locationWeatherViewControllers: [LocationWeatherViewController] = []
     
     let pageControl = UIPageControl()
@@ -91,7 +91,7 @@ class WeatherPagesViewController: UIPageViewController {
     }
 }
 
-extension WeatherPagesViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
+extension LocationWeatherPagesViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let index = locationWeatherViewControllers.firstIndex(of: viewController as! LocationWeatherViewController),
               index > 0

@@ -10,24 +10,24 @@ import UIKit
 
 class LocationWeatherViewController: UIViewController {
     
-    typealias DataSourceType = UICollectionViewDiffableDataSource<DetailWeatherViewModel.Section, DetailWeatherViewModel.Item>
-    typealias SnapshotType = NSDiffableDataSourceSnapshot<DetailWeatherViewModel.Section, DetailWeatherViewModel.Item>
+    typealias DataSourceType = UICollectionViewDiffableDataSource<LocationWeatherViewModel.Section, LocationWeatherViewModel.Item>
+    typealias SnapshotType = NSDiffableDataSourceSnapshot<LocationWeatherViewModel.Section, LocationWeatherViewModel.Item>
     
     static let sectionBackgroundDecorationElementKind = "section-background-element-kind"
     
-    let viewModel: DetailWeatherViewModel
+    let viewModel: LocationWeatherViewModel
     var dataSource: DataSourceType!
     
-    var weatherView: WeatherDetailView! {
+    var weatherView: LocationWeatherView! {
         guard isViewLoaded else { return nil }
-        return (view as! WeatherDetailView)
+        return (view as! LocationWeatherView)
     }
     
     var collectionView: UICollectionView {
         return weatherView.collectionView
     }
     
-    init(viewModel: DetailWeatherViewModel) {
+    init(viewModel: LocationWeatherViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -38,7 +38,7 @@ class LocationWeatherViewController: UIViewController {
     }
     
     override func loadView() {
-        let weatherView = WeatherDetailView()
+        let weatherView = LocationWeatherView()
         self.view = weatherView
     }
     
@@ -121,17 +121,17 @@ extension LocationWeatherViewController {
         return dataSource
     }
     
-    func applySnapshot(with cellViewModelsBySection: [DetailWeatherViewModel.Section: [ForecastCellViewModel]]) {
+    func applySnapshot(with cellViewModelsBySection: [LocationWeatherViewModel.Section: [ForecastCellViewModel]]) {
         var snapshot = SnapshotType()
-        for section in DetailWeatherViewModel.Section.allCases {
+        for section in LocationWeatherViewModel.Section.allCases {
             snapshot.appendSections([section])
             let viewModels = cellViewModelsBySection[section, default: []]
-            var items = [DetailWeatherViewModel.Item]()
+            var items = [LocationWeatherViewModel.Item]()
             switch section {
                 case .hourly:
-                    items = viewModels.map { DetailWeatherViewModel.Item.hourly($0 as! HourlyForecastCellViewModel) }
+                    items = viewModels.map { LocationWeatherViewModel.Item.hourly($0 as! HourlyForecastCellViewModel) }
                 case .daily:
-                    items = viewModels.map { DetailWeatherViewModel.Item.daily($0 as! DailyForecastCellViewModel) }
+                    items = viewModels.map { LocationWeatherViewModel.Item.daily($0 as! DailyForecastCellViewModel) }
             }
             snapshot.appendItems(items, toSection: section)
         }
