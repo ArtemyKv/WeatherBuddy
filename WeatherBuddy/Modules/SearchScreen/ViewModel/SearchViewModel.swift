@@ -11,7 +11,7 @@ protocol SearchViewModelDelegate: AnyObject {
     func addLocation(withSearchResult searchResult: SearchingService.SearchResult)
 }
 
-class SearchViewModel {
+final class SearchViewModel {
     
     var coordinator: Coordinator!
     var searchingService: SearchingService!

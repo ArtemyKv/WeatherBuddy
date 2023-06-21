@@ -1,5 +1,5 @@
 //
-//  SearchController.swift
+//  SearchTableViewController.swift
 //  WeatherBuddy
 //
 //  Created by Artem Kvashnin on 13.10.2022.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class SearchTableViewController: UITableViewController {
+final class SearchTableViewController: UITableViewController {
     
     var searchController: UISearchController!
     let viewModel: SearchViewModel
@@ -30,22 +30,22 @@ class SearchTableViewController: UITableViewController {
         setupBindings()
     }
     
-    func setupTableView() {
+    private func setupTableView() {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SearchCell")
     }
     
-    func setupSearchController() {
+    private func setupSearchController() {
         searchController = UISearchController()
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.delegate = self
     }
     
-    func setupNavigationItem() {
+    private func setupNavigationItem() {
         self.navigationItem.searchController = searchController
         self.navigationItem.title = "New Location"
     }
     
-    func setupBindings() {
+    private func setupBindings() {
         viewModel.searchResults.bind { [weak self] _ in
             self?.tableView.reloadData()
         }
