@@ -54,6 +54,7 @@
 		B66294B52A3FF94800D0624D /* CurrentWeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294B42A3FF94800D0624D /* CurrentWeatherViewModel.swift */; };
 		B66294B72A40005800D0624D /* HourlyForecastWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294B62A40005800D0624D /* HourlyForecastWeather.swift */; };
 		B66294B92A43FA1500D0624D /* SearchWeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294B82A43FA1500D0624D /* SearchWeatherViewModel.swift */; };
+		B66294BB2A44067200D0624D /* SearchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294BA2A44067200D0624D /* SearchCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +107,7 @@
 		B66294B42A3FF94800D0624D /* CurrentWeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherViewModel.swift; sourceTree = "<group>"; };
 		B66294B62A40005800D0624D /* HourlyForecastWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastWeather.swift; sourceTree = "<group>"; };
 		B66294B82A43FA1500D0624D /* SearchWeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchWeatherViewModel.swift; sourceTree = "<group>"; };
+		B66294BA2A44067200D0624D /* SearchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +183,7 @@
 				9C2E8E4628D15ADA00FFFB69 /* AppDelegate.swift */,
 				9C2E8E4828D15ADA00FFFB69 /* SceneDelegate.swift */,
 				B66294AB2A394A3100D0624D /* MainCoordinator.swift */,
+				B66294BA2A44067200D0624D /* SearchCoordinator.swift */,
 				B66294AD2A394A8300D0624D /* MainBuilder.swift */,
 			);
 			path = App;
@@ -404,6 +407,7 @@
 				9C34A57628F3CC02003FD3AA /* BriefCurrentWeather.swift in Sources */,
 				9C52443228D9688D001864A9 /* ForecastResponse.swift in Sources */,
 				9C34A56E28EE90E1003FD3AA /* Location+CoreDataProperties.swift in Sources */,
+				B66294BB2A44067200D0624D /* SearchCoordinator.swift in Sources */,
 				B66294B72A40005800D0624D /* HourlyForecastWeather.swift in Sources */,
 				9C60031128FE2EAB00EF95BA /* LocationsListDataSource.swift in Sources */,
 				9CCE78E628DC0DCB0092FA18 /* DailyForecastWeather.swift in Sources */,
