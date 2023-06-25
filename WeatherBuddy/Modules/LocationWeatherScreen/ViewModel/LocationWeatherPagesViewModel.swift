@@ -9,13 +9,13 @@ import Foundation
 
 final class LocationWeatherPagesViewModel {
     
-    private let coordinator: Coordinator
+    private let coordinator: MainCoordinatorProtocol
     private let weatherController: WeatherController
     
     private(set) var currentDetailViewModel: LocationWeatherViewModel?
     private(set) var favoritesDetailWeatherViewModels: [LocationWeatherViewModel] = []
     
-    init(coordinator: Coordinator, weatherController: WeatherController) {
+    init(coordinator: MainCoordinatorProtocol, weatherController: WeatherController) {
         self.coordinator = coordinator
         self.weatherController = weatherController
         setupNotificationObservers()

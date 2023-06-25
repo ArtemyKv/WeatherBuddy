@@ -12,7 +12,11 @@ import CoreData
 final class GeocodingService {
     private let geocoder = CLGeocoder()
     
-    var coreDataStack: CoreDataStack!
+    let coreDataStack: CoreDataStack
+    
+    init(coreDataStack: CoreDataStack) {
+        self.coreDataStack = coreDataStack
+    }
     
     func getLocation(from adressString: String, completion: @escaping (Location) -> Void) {
         geocoder.geocodeAddressString(adressString) { placemarks, error in

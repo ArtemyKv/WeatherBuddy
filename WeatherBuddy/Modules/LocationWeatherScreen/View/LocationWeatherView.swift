@@ -96,6 +96,11 @@ final class LocationWeatherView: UIView {
         ])
     }
     
+    func configure(with locationViewModel: LocationViewModel) {
+        currentWeatherView.configure(with: locationViewModel)
+        weatherParametersView.configure(with: locationViewModel)
+    }
+    
     func configure(with currentWeatherViewModel: CurrentWeatherViewModel) {
         backgroundColor = currentWeatherViewModel.weatherColor
         currentWeatherView.configure(with: currentWeatherViewModel)

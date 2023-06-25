@@ -152,8 +152,11 @@ final class LocationWeatherParametersView: UIView {
         ])
     }
     
-    func configure(with viewModel: CurrentWeatherViewModel) {
+    func configure(with viewModel: LocationViewModel) {
         cityLabel.text = viewModel.cityName
+    }
+    
+    func configure(with viewModel: CurrentWeatherViewModel) {
         temperatureLabel.text = viewModel.temperature
         feelsLikeLabel.text = viewModel.feelsLikeTemp
         pressureLabel.text = viewModel.pressure

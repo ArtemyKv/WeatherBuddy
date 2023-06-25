@@ -7,18 +7,19 @@
 
 import UIKit
 
-protocol Coordinator {
-    func start()
+protocol MainCoordinatorProtocol: Coordinator {
     func presentWeatherPagesScreen(startPage: Int)
-    func presentSearchScreen(searchScreenDelegate delegate: SearchViewModelDelegate)
+    func presentSearchScreen()
     func dismissModalScreen()
     func dismissCurrentScreen()
 }
 
-final class MainCoordinator: Coordinator {
+final class MainCoordinator: MainCoordinatorProtocol {    
+    var parentCoordinator: Coordinator?
+    var children: [Coordinator] = []
+    var navigationController: UINavigationController
     
     private let builder: Builder
-    private let navigationController: UINavigationController
     
     init(builder: Builder, navigationController: UINavigationController) {
         self.builder = builder
@@ -35,11 +36,13 @@ final class MainCoordinator: Coordinator {
         navigationController.pushViewController(pagesScreen, animated: true)
     }
     
-    func presentSearchScreen(searchScreenDelegate delegate: SearchViewModelDelegate) {
-        let searchVC = builder.searchScreen(coordinator: self, searchScreenDelegate: delegate)
-        let searchScreenNav = UINavigationController(rootViewController: searchVC)
-        searchScreenNav.modalPresentationStyle = .pageSheet
-        navigationController.viewControllers.last?.present(searchScreenNav, animated: true)
+    func presentSearchScreen() {
+        let childNavController = UINavigationController()
+        let childCoordinator = SearchCoordinator(builder: builder, navigationController: childNavController)
+        childCoordinator.parentCoordinator = self
+        children.append(childCoordinator)
+        
+        childCoordinator.start()
     }
     
     func dismissModalScreen() {

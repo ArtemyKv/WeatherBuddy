@@ -10,7 +10,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    var coordinator: Coordinator?
+    var coordinator: MainCoordinatorProtocol?
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -19,19 +19,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let window = UIWindow(windowScene: windowScene)
         let navigationController = UINavigationController()
-        let weatherController = WeatherController()
-        let builder = MainBuilder(weatherController: weatherController)
-        let coordinator = MainCoordinator(builder: builder, navigationController: navigationController)
-        coordinator.start()
-        
+        setupMainCoordinator(with: navigationController)
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
-        
         self.window = window
-        self.coordinator = coordinator
-        
     }
-
+    
+    func setupMainCoordinator(with navigationController: UINavigationController) {
+        let coreDataStack = CoreDataStack(modelName: "WeatherBuddy")
+        let geocodingService = GeocodingService(coreDataStack: coreDataStack)
+        let weatherFetchingService = WeatherFetchingService()
+        let locationService = LocationService()
+        let weatherController = WeatherController(locationService: locationService, geocodingService: geocodingService, weatherFetchingService: weatherFetchingService, coreDataStack: coreDataStack)
+        let builder = MainBuilder(weatherController: weatherController, geocodingService: geocodingService, weatherFetchingService: weatherFetchingService)
+        let coordinator = MainCoordinator(builder: builder, navigationController: navigationController)
+        
+        self.coordinator = coordinator
+        coordinator.start()
+    }
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.

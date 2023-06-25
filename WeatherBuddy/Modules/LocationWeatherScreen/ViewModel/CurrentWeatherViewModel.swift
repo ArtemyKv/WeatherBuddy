@@ -9,11 +9,8 @@ import Foundation
 import UIKit.UIImage
 
 struct CurrentWeatherViewModel {
-    var cityName: String
-    var areaName: String
     var temperature: String
     var weatherDescription: String
-    var date: String
     var weatherIcon: UIImage?
     var feelsLikeTemp: String
     var pressure: String

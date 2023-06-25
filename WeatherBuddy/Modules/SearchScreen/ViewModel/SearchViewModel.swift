@@ -7,18 +7,19 @@
 
 import Foundation
 
-protocol SearchViewModelDelegate: AnyObject {
-    func addLocation(withSearchResult searchResult: SearchingService.SearchResult)
-}
-
 final class SearchViewModel {
     
-    var coordinator: Coordinator!
-    var searchingService: SearchingService!
-    
-    weak var delegate: SearchViewModelDelegate?
-    
+    private let searchingService: SearchingService
+    private let geocodingService: GeocodingService
+    private weak var coordinator: SearchCoordinatorProtocol!
+        
     var searchResults: Box<[SearchingService.SearchResult]> = Box(value: [])
+    
+    init(coordinator: SearchCoordinatorProtocol, searchingService: SearchingService, geocodingService: GeocodingService) {
+        self.coordinator = coordinator
+        self.searchingService = searchingService
+        self.geocodingService = geocodingService
+    }
     
     func numberOfRows() -> Int {
         return searchResults.value.count
@@ -33,17 +34,23 @@ final class SearchViewModel {
     func rowSelected(at indexPath: IndexPath) {
         guard indexPath.row < searchResults.value.count else { return }
         let searchResult = searchResults.value[indexPath.row]
-        delegate?.addLocation(withSearchResult: searchResult)
-        coordinator.dismissModalScreen()
+        geocodingService.getLocation(from: searchResult.title) { [weak self] location in
+            self?.coordinator.presentSearchWeatherScreen(location: location)
+        }
     }
     
     func cancelButtonClicked() {
-        coordinator.dismissModalScreen()
+        coordinator.removeSearchScreen()
     }
     
     func searchTextDidChange(_ searchText: String) {
         searchingService.startSearch(withSearchString: searchText)
     }
+    
+    func searchScreenSwipedDown() {
+        coordinator.finish()
+    }
+    
 }
 
 extension SearchViewModel: SearchingServiceDelegate {

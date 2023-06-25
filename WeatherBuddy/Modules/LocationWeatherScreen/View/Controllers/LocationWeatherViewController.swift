@@ -8,15 +8,15 @@
 import Foundation
 import UIKit
 
-final class LocationWeatherViewController: UIViewController {
+class LocationWeatherViewController: UIViewController {
     
-    typealias DataSourceType = UICollectionViewDiffableDataSource<LocationWeatherViewModel.Section, LocationWeatherViewModel.Item>
-    typealias SnapshotType = NSDiffableDataSourceSnapshot<LocationWeatherViewModel.Section, LocationWeatherViewModel.Item>
+    typealias DataSourceType = UICollectionViewDiffableDataSource<WeatherCollectionViewItems.Section, WeatherCollectionViewItems.Item>
+    typealias SnapshotType = NSDiffableDataSourceSnapshot<WeatherCollectionViewItems.Section, WeatherCollectionViewItems.Item>
     
     static let sectionBackgroundDecorationElementKind = "section-background-element-kind"
     
-    private let viewModel: LocationWeatherViewModel
-    private var dataSource: DataSourceType!
+    var viewModel: LocationWeatherViewModel
+    var dataSource: DataSourceType!
     
     var weatherView: LocationWeatherView! {
         guard isViewLoaded else { return nil }
@@ -48,7 +48,12 @@ final class LocationWeatherViewController: UIViewController {
         setupBindings()
     }
 
-    private func setupBindings() {
+    func setupBindings() {
+        viewModel.locationViewModel.bind { [weak self] locationViewModel in
+            guard let locationViewModel else { return }
+            self?.weatherView.configure(with: locationViewModel)
+        }
+        
         viewModel.currentWeatherViewModel.bind { [weak self] currentWeatherViewModel in
             guard let currentWeatherViewModel else { return }
             self?.weatherView.configure(with: currentWeatherViewModel)
@@ -58,7 +63,7 @@ final class LocationWeatherViewController: UIViewController {
         }
     }
     
-    private func configureForecastCollectionView() {
+    func configureForecastCollectionView() {
         collectionView.register(HourlyWeatherCollectionViewCell.self, forCellWithReuseIdentifier: HourlyWeatherCollectionViewCell.reuseIdentifier)
         collectionView.register(DailyWeatherCollectionViewCell.self, forCellWithReuseIdentifier: DailyWeatherCollectionViewCell.reuseIdentifier)
         collectionView.collectionViewLayout = collectionViewLayout()
@@ -68,7 +73,7 @@ final class LocationWeatherViewController: UIViewController {
 }
 
 extension LocationWeatherViewController {
-    private func collectionViewLayout() -> UICollectionViewCompositionalLayout {
+    func collectionViewLayout() -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, environment in
             let section: NSCollectionLayoutSection
             
@@ -105,7 +110,7 @@ extension LocationWeatherViewController {
         
     }
     
-    private func collectionViewDataSource() -> DataSourceType {
+    func collectionViewDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
                 case .hourly(let hourlyCellViewModel):
@@ -121,17 +126,17 @@ extension LocationWeatherViewController {
         return dataSource
     }
     
-    private func applySnapshot(with cellViewModelsBySection: [LocationWeatherViewModel.Section: [ForecastCellViewModel]]) {
+    func applySnapshot(with cellViewModelsBySection: [WeatherCollectionViewItems.Section: [ForecastCellViewModel]]) {
         var snapshot = SnapshotType()
-        for section in LocationWeatherViewModel.Section.allCases {
+        for section in WeatherCollectionViewItems.Section.allCases {
             snapshot.appendSections([section])
             let viewModels = cellViewModelsBySection[section, default: []]
-            var items = [LocationWeatherViewModel.Item]()
+            var items = [WeatherCollectionViewItems.Item]()
             switch section {
                 case .hourly:
-                    items = viewModels.map { LocationWeatherViewModel.Item.hourly($0 as! HourlyForecastCellViewModel) }
+                    items = viewModels.map { WeatherCollectionViewItems.Item.hourly($0 as! HourlyForecastCellViewModel) }
                 case .daily:
-                    items = viewModels.map { LocationWeatherViewModel.Item.daily($0 as! DailyForecastCellViewModel) }
+                    items = viewModels.map { WeatherCollectionViewItems.Item.daily($0 as! DailyForecastCellViewModel) }
             }
             snapshot.appendItems(items, toSection: section)
         }

@@ -8,9 +8,37 @@
 import Foundation
 import UIKit.UIImage
 
-final class LocationWeatherViewModel {
+enum WeatherCollectionViewItems {
+    enum Section: CaseIterable {
+        case hourly
+        case daily
+    }
+
+    enum Item: Hashable {
+        case hourly(HourlyForecastCellViewModel)
+        case daily(DailyForecastCellViewModel)
+        
+    }
+}
+
+protocol LocationWeatherViewModelProtocol: AnyObject {
+    var location: Location? { get set }
+    var currentWeather: Weather? { get set }
+    var weatherForecast: [Weather]? { get set }
+    
+    var locationViewModel: Box<LocationViewModel?> { get set }
+    var currentWeatherViewModel: Box<CurrentWeatherViewModel?> { get set }
+    var forecastCellViewModelsBySection: Box<[WeatherCollectionViewItems.Section: [ForecastCellViewModel]]> { get set }
+}
+
+class LocationWeatherViewModel: LocationWeatherViewModelProtocol {
     //MARK: - Model properties
-    private var location: Location
+    var location: Location? {
+        didSet {
+            guard let location else { return }
+            setupLocationViewModel(with: location)
+        }
+    }
     
     var currentWeather: Weather? {
         didSet {
@@ -20,39 +48,32 @@ final class LocationWeatherViewModel {
     }
     var weatherForecast: [Weather]? {
         didSet {
-            guard let forecast = weatherForecast else { return }
+            guard let forecast = weatherForecast, forecast.count > 0 else { return }
             setupForecastViewModels(with: forecast)
         }
     }
     
+    var locationViewModel: Box<LocationViewModel?> = Box(value: nil)
     var currentWeatherViewModel: Box<CurrentWeatherViewModel?> = Box(value: nil)
-    var forecastCellViewModelsBySection: Box<[Section: [ForecastCellViewModel]]> = Box(value: [:])
+    var forecastCellViewModelsBySection: Box<[WeatherCollectionViewItems.Section: [ForecastCellViewModel]]> = Box(value: [:])
     
-    private let dateFormatter: DateFormatter = {
+    let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter
     }()
     
-    //MARK: - CollectionView sections and items
-    enum Section: CaseIterable {
-        case hourly
-        case daily
-    }
-    
-    enum Item: Hashable {
-        case hourly(HourlyForecastCellViewModel)
-        case daily(DailyForecastCellViewModel)
-    }
-    
     //MARK: - Init
-    init(location: Location) {
+    init(location: Location?) {
         self.location = location
+        if let location = location {
+            setupLocationViewModel(with: location)
+        }
     }
     
     //MARK: - Methods
-    private func setupCurrentWeatherViewModel(with weather: Weather) {
+    func setupLocationViewModel(with location: Location) {
         dateFormatter.timeZone = location.timeZone
         //Current weather info
         let cityName = location.name ?? ""
@@ -64,10 +85,15 @@ final class LocationWeatherViewModel {
         } else {
             areaName = location.country ?? " "
         }
+        let date = dateFormatter.string(from: Date())
         
+        locationViewModel.value = LocationViewModel(cityName: cityName, areaName: areaName, date: date)
+    }
+    
+    func setupCurrentWeatherViewModel(with weather: Weather) {
+        //Current weather info
         let temperature = "\(Int(weather.parameters.temperature))º"
         let weatherDescription = weather.description
-        let date = dateFormatter.string(from: Date())
         let weatherIcon = UIImage(named: weather.conditionIconID)
         
         //Weather parameters info
@@ -84,11 +110,8 @@ final class LocationWeatherViewModel {
         let weatherColor = UIColor.weatherColor(forIconID: weather.conditionIconID)
         
         currentWeatherViewModel.value = CurrentWeatherViewModel(
-            cityName: cityName,
-            areaName: areaName,
             temperature: temperature,
             weatherDescription: weatherDescription,
-            date: date,
             weatherIcon: weatherIcon,
             feelsLikeTemp: feelsLikeTemp,
             pressure: pressure,
@@ -102,13 +125,15 @@ final class LocationWeatherViewModel {
         
     }
     
-    private func setupForecastViewModels(with forecast: [Weather]) {
+    func setupForecastViewModels(with forecast: [Weather]) {
         setupHourlyForecastViewModel(with: forecast)
         setupDailyForecastViewModel(with: forecast)
     }
     
-    private func setupHourlyForecastViewModel(with forecast: [Weather]) {
+    func setupHourlyForecastViewModel(with forecast: [Weather]) {
+        guard let location else { return }
         forecastCellViewModelsBySection.value[.hourly] = []
+        print(forecast.count)
         let oneDayHourlyWeatherList = forecast
             .map({HourlyForecastWeather(unixDate: $0.unixDate, temperature: $0.parameters.temperature, conditionIconID: $0.conditionIconID)})
             .prefix(through: 15)

@@ -15,14 +15,10 @@ final class WeatherController {
     static let didSetWeatherForFavoriteLocationsNotification = Notification.Name("WeatherController.didSetWeatherForFavoriteLocations")
     
     //MARK: - Service properties
-    lazy var coreDataStack = CoreDataStack(modelName: "WeatherBuddy")
-    private lazy var geocodingService: GeocodingService = {
-        let geocodingService = GeocodingService()
-        geocodingService.coreDataStack = coreDataStack
-        return geocodingService
-    }()
-    private let locationService = LocationService()
-    private let weatherFetchingService = WeatherFetchingService()
+    let coreDataStack: CoreDataStack
+    let geocodingService: GeocodingService
+    let locationService: LocationService
+    let weatherFetchingService: WeatherFetchingService
         
     //MARK: - Location properties
     private var favoriteLocations: [Location] = []
@@ -36,7 +32,11 @@ final class WeatherController {
     var forecastByLocation: [Location: [Weather]] = [:]
     
     //MARK: - Init
-    init() {
+    init(locationService: LocationService, geocodingService: GeocodingService, weatherFetchingService: WeatherFetchingService, coreDataStack: CoreDataStack) {
+        self.locationService = locationService
+        self.geocodingService = geocodingService
+        self.weatherFetchingService = weatherFetchingService
+        self.coreDataStack = coreDataStack
         locationService.delegate = self
     }
         
@@ -125,16 +125,13 @@ final class WeatherController {
         return favoriteLocations[index]
     }
     
-    func addLocationToFavorites(withAddressString addressString: String, completion: @escaping (Location) ->()) {
-        geocodingService.getLocation(from: addressString) { [weak self] location in
-            guard let self = self else { return }
-            location.order = Int32(self.favoriteLocations.count)
-            self.coreDataStack.saveContext()
-            self.favoriteLocations.append(location)
-
-            self.fetchWeatherForFavoriteLocation(location: location) {
-                completion(location)
-            }
+    func addLocationToFavorites(_ location: Location, completion: @escaping () ->()) {
+        location.order = Int32(favoriteLocationsCount())
+        coreDataStack.saveContext()
+        favoriteLocations.append(location)
+        
+        fetchWeatherForFavoriteLocation(location: location) {
+            completion()
         }
     }
     

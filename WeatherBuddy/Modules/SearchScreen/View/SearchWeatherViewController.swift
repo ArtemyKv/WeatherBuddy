@@ -6,3 +6,21 @@
 //
 
 import Foundation
+import UIKit
+
+class SearchWeatherViewController: LocationWeatherViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupNavigationItem()
+    }
+    
+    func setupNavigationItem() {
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        navigationItem.rightBarButtonItem = addButton
+    }
+    
+    @objc func addButtonTapped() {
+        let searchWeatherViewModel = viewModel as! SearchWeatherViewModel
+        searchWeatherViewModel.addButtonTapped()
+    }
+}

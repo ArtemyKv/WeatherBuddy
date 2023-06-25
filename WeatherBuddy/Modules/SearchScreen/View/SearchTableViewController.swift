@@ -28,6 +28,13 @@ final class SearchTableViewController: UITableViewController {
         setupSearchController()
         setupNavigationItem()
         setupBindings()
+        navigationController?.presentationController?.delegate = self
+
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        searchController.isActive = false
+        super.viewWillDisappear(animated)
     }
     
     private func setupTableView() {
@@ -77,5 +84,12 @@ extension SearchTableViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         viewModel.searchTextDidChange(searchText)
+    }
+}
+
+extension SearchTableViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
+        searchController.isActive = false
+        viewModel.searchScreenSwipedDown()
     }
 }

@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct LocationViewModel {
+    var cityName: String
+    var areaName: String
+    var date: String
+}

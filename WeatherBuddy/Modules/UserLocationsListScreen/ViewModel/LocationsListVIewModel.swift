@@ -10,7 +10,7 @@ import Foundation
 final class LocationsListViewModel {
     
     private let weatherController: WeatherController
-    private let coordinator: Coordinator
+    private let coordinator: MainCoordinatorProtocol
     
     var favoriteLocationsCellViewModels: Box<[LocationsListCellViewModel]> = Box(value: [])
     var currentLocationCellViewModel: Box<LocationsListCellViewModel?> = Box(value: nil)
@@ -20,7 +20,7 @@ final class LocationsListViewModel {
         case favorite
     }
     
-    init(weatherController: WeatherController, coordinator: Coordinator) {
+    init(weatherController: WeatherController, coordinator: MainCoordinatorProtocol) {
         self.weatherController = weatherController
         self.coordinator = coordinator
         setupNotificationObservers()
@@ -45,6 +45,13 @@ final class LocationsListViewModel {
             self,
             selector: #selector(updateFavoriteLocationsCellViewModels),
             name: WeatherController.didSetWeatherForFavoriteLocationsNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(addLocationToFavorites),
+            name: SearchWeatherViewModel.addLocationToFavoritesNotification,
             object: nil
         )
     }
@@ -86,6 +93,13 @@ final class LocationsListViewModel {
         cellViewModel.briefCurrentWeather = briefWeather
     }
     
+    @objc private func addLocationToFavorites(_ notification: NSNotification) {
+        guard let userInfo = notification.userInfo, let location = userInfo["Location"] as? Location else { return }
+        weatherController.addLocationToFavorites(location) { [weak self] in
+            self?.makeCellViewModelForNewLocation(location: location)
+        }
+    }
+    
     private func makeCellViewModelForNewLocation(location: Location) {
         let cellViewModel = cellViewModel(forLocation: location, isCurrentLocation: false)
         favoriteLocationsCellViewModels.value.append(cellViewModel)
@@ -112,20 +126,12 @@ final class LocationsListViewModel {
     }
     
     func addButtonTapped() {
-        coordinator.presentSearchScreen(searchScreenDelegate: self)
+        coordinator.presentSearchScreen()
     }
     
     func rowSelected(at indexPath: IndexPath) {
         let startPage = indexPath.section == 0 ? 0 : (indexPath.row + 1)
         coordinator.presentWeatherPagesScreen(startPage: startPage)
         
-    }
-}
-
-extension LocationsListViewModel: SearchViewModelDelegate {
-    func addLocation(withSearchResult searchResult: SearchingService.SearchResult) {
-        weatherController.addLocationToFavorites(withAddressString: searchResult.title) { [weak self] location in
-            self?.makeCellViewModelForNewLocation(location: location)
-        }
     }
 }

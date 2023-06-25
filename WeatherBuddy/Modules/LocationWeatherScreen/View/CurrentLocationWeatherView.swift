@@ -150,12 +150,15 @@ final class CurrentLocationWeatherView: UIView {
         ])
     }
     
-    func configure(with viewModel: CurrentWeatherViewModel) {
+    func configure(with viewModel: LocationViewModel) {
         cityLabel.text = viewModel.cityName
         areaLabel.text = viewModel.areaName
+        dateLabel.text = viewModel.date
+    }
+    
+    func configure(with viewModel: CurrentWeatherViewModel) {
         temperatureLabel.text = viewModel.temperature
         descriptionLabel.text = viewModel.weatherDescription
-        dateLabel.text = viewModel.date
         imageView.image = viewModel.weatherIcon
     }
 }
