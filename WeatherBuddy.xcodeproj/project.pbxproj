@@ -56,6 +56,7 @@
 		B66294B92A43FA1500D0624D /* SearchWeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294B82A43FA1500D0624D /* SearchWeatherViewModel.swift */; };
 		B66294BB2A44067200D0624D /* SearchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294BA2A44067200D0624D /* SearchCoordinator.swift */; };
 		B66294BD2A46010800D0624D /* SearchWeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66294BC2A46010800D0624D /* SearchWeatherViewController.swift */; };
+		B68BFE2F2A489A8300DB6569 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68BFE2E2A489A8300DB6569 /* Coordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -110,6 +111,7 @@
 		B66294B82A43FA1500D0624D /* SearchWeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchWeatherViewModel.swift; sourceTree = "<group>"; };
 		B66294BA2A44067200D0624D /* SearchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCoordinator.swift; sourceTree = "<group>"; };
 		B66294BC2A46010800D0624D /* SearchWeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchWeatherViewController.swift; sourceTree = "<group>"; };
+		B68BFE2E2A489A8300DB6569 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,6 +186,7 @@
 				9C2E8E5128D15ADB00FFFB69 /* LaunchScreen.storyboard */,
 				9C2E8E4628D15ADA00FFFB69 /* AppDelegate.swift */,
 				9C2E8E4828D15ADA00FFFB69 /* SceneDelegate.swift */,
+				B68BFE2E2A489A8300DB6569 /* Coordinator.swift */,
 				B66294AB2A394A3100D0624D /* MainCoordinator.swift */,
 				B66294BA2A44067200D0624D /* SearchCoordinator.swift */,
 				B66294AD2A394A8300D0624D /* MainBuilder.swift */,
@@ -434,6 +437,7 @@
 				9CC3E7CC28D652850033DD0F /* LocationWeatherViewController.swift in Sources */,
 				B66294AE2A394A8300D0624D /* MainBuilder.swift in Sources */,
 				9C05B7D0295BCE24001E26FE /* LocationsListSectionHeader.swift in Sources */,
+				B68BFE2F2A489A8300DB6569 /* Coordinator.swift in Sources */,
 				9CCE78E428DAC05A0092FA18 /* ForecastCellViewModel.swift in Sources */,
 				9C52443428D978A5001864A9 /* HourlyForecastCellViewModel.swift in Sources */,
 				9CC3E7D028D802A00033DD0F /* LocationWeatherViewModel.swift in Sources */,
